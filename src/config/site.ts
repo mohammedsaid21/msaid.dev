@@ -47,23 +47,29 @@ export const siteConfig = {
     upwork: "https://www.upwork.com/freelancers/~01afd7175205b2dfdd",
   },
 
-  // ---- Section 2: Trust & Experience ----
-  experience: {
-    title: "Helping companies build better digital experiences",
-    categories: [
-      "SaaS platforms",
-      "Business applications",
-      "E-commerce experiences",
-      "Internal tools",
-      "Customer-facing products",
+  // ---- Section 2: Proof (by the numbers) ----
+  proof: {
+    eyebrow: "By the numbers",
+    title: "Real products. Real users. Real scale.",
+    subtitle: "Outcomes from shipping production software for startups and teams.",
+    metrics: [
+      { value: "15K+", label: "Users served" },
+      { value: "10+", label: "Products shipped" },
+      { value: "40+", label: "Founders & teams" },
+      { value: "4+", label: "Years building" },
     ],
-    credibility: [
-      { title: "Ship in weeks, not months", body: "From a rough idea or a half-built AI app to a live product — fast." },
-      { title: "Experiences users love", body: "Polished interfaces engineered to delight people and keep them coming back." },
-      { title: "Built to scale", body: "Clean architecture that carries you from your first user to your millionth." },
-      { title: "A partner, not a vendor", body: "Clear communication, deadlines met, and someone who actually shows up." },
+    techStack: [
+      "React",
+      "Next.js",
+      "Node.js",
+      "TypeScript",
+      "React Native",
+      "Supabase",
+      "Tailwind",
+      "Postgres",
+      "Three.js",
+      "Framer Motion",
     ],
-    tagline: "Many products. Many challenges. One reliable engineering partner.",
   },
 
   // ---- Section 3: Why companies choose me ----
@@ -165,7 +171,45 @@ export const siteConfig = {
     ],
   },
 
-  // ---- Section 7: Work process ----
+  // ---- Section 7: Side projects / experiments (compact 3-up row) ----
+  experiments: {
+    title: "More things I've built",
+    items: [
+      {
+        category: "UI inspiration",
+        name: "Lumen",
+        accent: "#6366f1",
+        image: "/projects/lumen.webp",
+        featured: true,
+        description:
+          "UI animation inspiration — live demos, copyable code, and curated palettes in one immersive place.",
+        url: "https://lumen-jet-tau.vercel.app",
+        tags: ["UI inspiration", "Animations", "Palettes"],
+      },
+      {
+        category: "AI voice assistant",
+        name: "Ayla",
+        accent: "#4fd1c5",
+        image: "/projects/ayla.webp",
+        description:
+          "Real-time, in-browser AI voice assistant fluent in Arabic and English — the whole UI flips RTL/LTR to match the spoken language, with live audio-reactive visuals.",
+        url: "https://voice-ai-demo-azure.vercel.app/",
+        tags: ["AI voice", "RTL / i18n", "Realtime"],
+      },
+      {
+        category: "Sports platform",
+        name: "PadelBook",
+        accent: "#10b981",
+        image: "/projects/padelbook.webp",
+        description:
+          "All-in-one platform for padel clubs — court reservations, tournaments, memberships, and player experiences.",
+        url: "https://padelbook-premium.vercel.app/",
+        tags: ["Booking", "Clubs", "Memberships"],
+      },
+    ],
+  },
+
+  // ---- Section 8: Work process ----
   process: {
     title: "From idea to production",
     steps: [

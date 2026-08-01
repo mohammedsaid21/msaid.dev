@@ -22,8 +22,8 @@ export function SectionHeading({
     <Reveal className={`flex max-w-2xl flex-col gap-4 ${alignment}`}>
       {eyebrow && (
         <span className="inline-flex items-center gap-2 text-sm font-semibold">
-          <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500" />
-          <span className="text-gradient animate-gradient">{eyebrow}</span>
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+          <span className="text-accent">{eyebrow}</span>
         </span>
       )}
       <h2 className="text-balance text-3xl font-semibold tracking-tight text-ink sm:text-4xl lg:text-[2.6rem] lg:leading-[1.12]">

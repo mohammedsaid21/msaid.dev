@@ -3,10 +3,11 @@ import { CustomCursor } from './components/interactions/CustomCursor'
 import { ScrollProgress } from './components/interactions/ScrollProgress'
 import { SocialRail } from './components/layout/SocialRail'
 import { Hero } from './components/sections/Hero'
-import { Trust } from './components/sections/Trust'
+import { Proof } from './components/sections/Proof'
 import { Capabilities } from './components/sections/Capabilities'
 import { Pipeline } from './components/sections/Pipeline'
 import { Products } from './components/sections/Products'
+import { Experiments } from './components/sections/Experiments'
 import { HealthCheck } from './components/sections/HealthCheck'
 import { FinalCTA } from './components/sections/FinalCTA'
 import { Footer } from './components/layout/Footer'
@@ -21,8 +22,9 @@ export default function App() {
       <SocialRail />
       <Hero />
       <main>
-        <Trust />
+        <Proof />
         <Products />
+        <Experiments />
         <Capabilities />
         <Pipeline />
         <HealthCheck />
