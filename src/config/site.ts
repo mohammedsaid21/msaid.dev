@@ -257,11 +257,17 @@ export const siteConfig = {
     ],
   },
 
-  // ---- Final CTA ----
-  finalCta: {
-    headline: "Have an idea for your next digital product?",
-    subtitle: "Let's build something exceptional together.",
-    button: "Book a Call",
+  // ---- Contact: project-inquiry form (alternative to booking a call) ----
+  contact: {
+    eyebrow: "Contact",
+    headline: "Let's build something great.",
+    body: "Not ready to book a call? Share a few details about your project and I'll reply within 24 hours — with thoughts on scope, timeline, and whether I'm the right fit.",
+    budgets: ["< $5k", "$5–10k", "$10–20k", "$20–40k", "$40k+"],
+    submitLabel: "Send project details",
+    successTitle: "Got it — thank you!",
+    successBody: "I'll review your project and reply within 24 hours.",
+    errorBody: "Something went wrong sending your details. Try again, or email me directly.",
+    responseTime: "Replies within 24 hours",
   },
 
   // ---- Booking modal ("Book a Call") ----

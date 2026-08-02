@@ -9,7 +9,7 @@ import { Pipeline } from './components/sections/Pipeline'
 import { Products } from './components/sections/Products'
 import { Experiments } from './components/sections/Experiments'
 import { HealthCheck } from './components/sections/HealthCheck'
-import { FinalCTA } from './components/sections/FinalCTA'
+import { Contact } from './components/sections/Contact'
 import { Footer } from './components/layout/Footer'
 import { BookingProvider } from './components/booking/BookingContext'
 
@@ -28,7 +28,7 @@ export default function App() {
         <Capabilities />
         <Pipeline />
         <HealthCheck />
-        <FinalCTA />
+        <Contact />
       </main>
       <Footer />
     </BookingProvider>
