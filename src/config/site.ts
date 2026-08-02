@@ -28,7 +28,7 @@ export const siteConfig = {
     image: "/projects/astath-fannan.webp",
   },
 
-  url: "https://your-domain.com",
+  url: "https://msaid.app",
   bookingUrl: "#contact",
   capabilitiesUrl: "#capabilities",
   email: "mohmmedsaidaker@gmail.com",

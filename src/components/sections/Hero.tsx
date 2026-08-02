@@ -87,7 +87,7 @@ export function Hero() {
             transition={{ duration: reduce ? 0 : 0.7, delay: 0.08, ease: EASE }}
             className="mt-6 text-balance text-5xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-6xl lg:text-7xl"
           >
-            I build <span className="text-accent">products</span>.
+            I ship the <span className="text-accent">products</span> startups bet on.
           </motion.h1>
 
           {/* Supporting copy — the journey, explicit */}
@@ -97,11 +97,8 @@ export function Hero() {
             transition={{ duration: reduce ? 0 : 0.7, delay: 0.18, ease: EASE }}
             className="mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg"
           >
-            End to end —{' '}
-            <span className="font-medium text-ink">
-              idea → prototype → production → real users.
-            </span>{' '}
-            From a rough concept or a half-built AI app, I ship products people actually use.
+            Got a half-built app that’s stuck — or just a rough idea? I take it from{' '}
+            <span className="font-medium text-ink">prototype → production → real users.</span>
           </motion.p>
 
           {/* Social proof */}
