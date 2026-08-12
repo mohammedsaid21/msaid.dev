@@ -1,6 +1,7 @@
 import { Seo } from './components/seo/Seo'
 import { CustomCursor } from './components/interactions/CustomCursor'
 import { ScrollProgress } from './components/interactions/ScrollProgress'
+import { Bubbles } from './components/interactions/Bubbles'
 import { SocialRail } from './components/layout/SocialRail'
 import { Hero } from './components/sections/Hero'
 import { Proof } from './components/sections/Proof'
@@ -20,17 +21,20 @@ export default function App() {
       <CustomCursor />
       <ScrollProgress />
       <SocialRail />
-      <Hero />
-      <main>
-        <Proof />
-        <Products />
-        <Experiments />
-        <Capabilities />
-        <Pipeline />
-        <HealthCheck />
-        <Contact />
-      </main>
-      <Footer />
+      <div className="relative">
+        <Bubbles />
+        <Hero />
+        <main>
+          <Proof />
+          <Products />
+          <Experiments />
+          <Capabilities />
+          <Pipeline />
+          <HealthCheck />
+          <Contact />
+        </main>
+        <Footer />
+      </div>
     </BookingProvider>
   )
 }
