@@ -1,4 +1,5 @@
 import { siteConfig } from '../../config/site'
+import { useLocale } from '../../i18n/LocaleProvider'
 import { Section } from '../ui/Section'
 import { SectionHeading } from '../ui/SectionHeading'
 import { Reveal } from '../ui/Reveal'
@@ -47,6 +48,7 @@ function StarGlyph() {
 
 function ExperimentCard({ p }: { p: Experiment }) {
   const featured = p.featured === true
+  const { t } = useLocale()
   return (
     <article
       className="group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-canvas transition-all duration-300 hover:-translate-y-1"
@@ -59,18 +61,18 @@ function ExperimentCard({ p }: { p: Experiment }) {
     >
       {/* Featured badge */}
       {featured && (
-        <span className="absolute right-3 top-3 z-10 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">
+        <span className="absolute end-3 top-3 z-10 inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">
           <StarGlyph />
-          Featured
+          {t.experiments.featured}
         </span>
       )}
 
       {/* Browser-chrome frame + screenshot */}
       <div className="border-b border-line bg-canvas-subtle">
         <div className="flex items-center gap-2 px-4 py-2.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#e2e2e6]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#e2e2e6]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#e2e2e6]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-line" />
+          <span className="h-2.5 w-2.5 rounded-full bg-line" />
+          <span className="h-2.5 w-2.5 rounded-full bg-line" />
           <span className="ml-2 hidden truncate rounded-md border border-line bg-canvas px-2.5 py-1 text-[10px] text-subtle sm:inline">
             {hostOf(p.url)}
           </span>
@@ -127,8 +129,8 @@ function ExperimentCard({ p }: { p: Experiment }) {
           className="inline-flex w-fit items-center gap-2 text-sm font-semibold transition-colors"
           style={{ color: p.accent }}
         >
-          Visit live site
-          <span className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+          {t.experiments.visit}
+          <span className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5">
             <ExternalGlyph />
           </span>
         </a>
@@ -145,12 +147,17 @@ function ExperimentCard({ p }: { p: Experiment }) {
  */
 export function Experiments() {
   const { experiments } = siteConfig
+  const { t } = useLocale()
+  const items = experiments.items.map((p) => ({
+    ...p,
+    ...t.experiments.items[p.id],
+  }))
   return (
     <Section id="experiments">
-      <SectionHeading eyebrow="Experiments" title={experiments.title} />
+      <SectionHeading eyebrow={t.experiments.eyebrow} title={t.experiments.title} />
 
       <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {experiments.items.map((p, i) => (
+        {items.map((p, i) => (
           <Reveal key={p.name} delay={i * 0.08} className="h-full">
             <ExperimentCard p={p} />
           </Reveal>

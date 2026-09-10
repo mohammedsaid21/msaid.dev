@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { siteConfig } from '../../config/site'
+import { useLocale } from '../../i18n/LocaleProvider'
 import {
   buildMailto,
   formatDate,
@@ -21,15 +22,17 @@ interface BookingModalProps {
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const GRADIENT_BTN =
-  'group inline-flex items-center justify-center gap-2 rounded-full bg-[linear-gradient(100deg,#6366f1,#8b5cf6,#ec4899)] bg-[length:200%_auto] px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_30px_-8px_rgba(139,92,246,0.55)] transition-all duration-200 hover:bg-[position:100%_0] hover:shadow-[0_10px_36px_-8px_rgba(236,72,153,0.6)] disabled:cursor-not-allowed disabled:opacity-60'
+const PRIMARY_BTN =
+  'group inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-canvas transition-all duration-200 hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-60'
 const QUIET_BTN =
-  'inline-flex items-center justify-center rounded-full border border-line bg-canvas px-5 py-3 text-sm font-semibold text-muted transition hover:bg-canvas-subtle hover:text-ink'
+  'inline-flex cursor-pointer items-center justify-center rounded-full border border-line bg-canvas px-5 py-3 text-sm font-semibold text-muted transition hover:bg-canvas-subtle hover:text-ink'
 const FIELD =
   'mt-1.5 w-full rounded-xl border border-line bg-canvas-subtle px-3.5 py-3 text-sm text-ink placeholder:text-subtle focus:border-accent focus:bg-canvas focus:outline-none'
 
 export function BookingModal({ isOpen, onClose }: BookingModalProps) {
   const { booking } = siteConfig
+  const { t: dict } = useLocale()
+  const copy = dict.booking
   const reduce = useReducedMotion()
   const panelRef = useRef<HTMLDivElement>(null)
 
@@ -81,20 +84,20 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
     e.preventDefault()
     setError('')
     if (!date) {
-      setError('Please pick a date.')
+      setError(copy.errDate)
       return
     }
     if (!time) {
-      setError('Please pick a time.')
+      setError(copy.errTime)
       return
     }
     // Block past times when the chosen date is today (zero-padded HH:MM compares correctly).
     if (date === todayISO() && time < nowHHMM()) {
-      setError('That time has already passed — please pick a later one.')
+      setError(copy.errPast)
       return
     }
     if (!EMAIL_RE.test(email)) {
-      setError('Please enter a valid email address.')
+      setError(copy.errEmail)
       return
     }
 
@@ -109,7 +112,7 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
         return
       }
       setStatus('idle')
-      setError(booking.errorBody)
+      setError(copy.errorBody)
       return
     }
 
@@ -149,8 +152,8 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
             <button
               type="button"
               onClick={onClose}
-              aria-label="Close booking dialog"
-              className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-subtle transition hover:bg-canvas-subtle hover:text-ink"
+              aria-label={copy.close}
+              className="absolute end-4 top-4 grid h-9 w-9 cursor-pointer place-items-center rounded-full text-subtle transition hover:bg-canvas-subtle hover:text-ink"
             >
               <XIcon />
             </button>
@@ -160,30 +163,28 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-accent-soft">
                   <CheckIcon />
                 </div>
-                <h2 className="mt-5 text-2xl font-semibold text-ink">{booking.successTitle}</h2>
+                <h2 className="mt-5 text-2xl font-semibold text-ink">{copy.successTitle}</h2>
                 <p className="mx-auto mt-2 max-w-sm text-sm text-muted">
-                  {deliveredVia === 'mailto'
-                    ? 'Your email app should have opened with the details — just hit send.'
-                    : booking.successBody}
+                  {deliveredVia === 'mailto' ? copy.mailtoBody : copy.successBody}
                 </p>
 
-                <dl className="mx-auto mt-6 max-w-sm space-y-2 rounded-2xl border border-line bg-canvas-subtle p-5 text-left text-sm">
-                  <Row k="Date" v={formatDate(date)} />
-                  <Row k="Time" v={time} />
-                  <Row k="Email" v={email} />
+                <dl className="mx-auto mt-6 max-w-sm space-y-2 rounded-2xl border border-line bg-canvas-subtle p-5 text-start text-sm">
+                  <Row k={copy.date} v={formatDate(date)} />
+                  <Row k={copy.time} v={time} />
+                  <Row k={copy.email} v={email} />
                 </dl>
 
                 <div className="mt-6 flex flex-col items-center gap-3">
                   {deliveredVia === 'mailto' && (
                     <a
-                      className={GRADIENT_BTN}
+                      className={PRIMARY_BTN}
                       href={buildMailto(buildPayload(), booking.mailtoRecipient)}
                     >
-                      Open email again
+                      {copy.openEmail}
                     </a>
                   )}
                   <button type="button" className={QUIET_BTN} onClick={onClose}>
-                    Done
+                    {copy.done}
                   </button>
                 </div>
               </div>
@@ -191,9 +192,9 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
               <>
                 <header>
                   <h2 id="booking-title" className="text-xl font-semibold text-ink sm:text-2xl">
-                    {booking.heading}
+                    {copy.heading}
                   </h2>
-                  <p className="mt-1 text-sm text-muted">{booking.subtitle}</p>
+                  <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
                 </header>
 
                 <form onSubmit={onSubmit} className="mt-5">
@@ -211,7 +212,7 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                       <label htmlFor="bk-date" className="text-sm font-medium text-ink">
-                        Date
+                        {copy.date}
                       </label>
                       <input
                         id="bk-date"
@@ -224,7 +225,7 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
                     </div>
                     <div>
                       <label htmlFor="bk-time" className="text-sm font-medium text-ink">
-                        Time
+                        {copy.time}
                       </label>
                       <input
                         id="bk-time"
@@ -239,7 +240,7 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
                   <div className="mt-4">
                     <label htmlFor="bk-email" className="text-sm font-medium text-ink">
-                      Email <span className="text-fuchsia">*</span>
+                      {copy.email} <span className="text-accent">*</span>
                     </label>
                     <input
                       id="bk-email"
@@ -254,45 +255,43 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
                   <div className="mt-4">
                     <label htmlFor="bk-message" className="text-sm font-medium text-ink">
-                      Message <span className="text-subtle">(optional)</span>
+                      {copy.message} <span className="text-subtle">({dict.contact.optional})</span>
                     </label>
                     <textarea
                       id="bk-message"
                       rows={3}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Anything you'd like me to know before the call?"
+                      placeholder={copy.messagePlaceholder}
                       className={`${FIELD} resize-none`}
                     />
                   </div>
 
-                  {error && <p className="mt-4 text-sm text-rose-600">{error}</p>}
+                  {error && <p className="mt-4 text-sm text-rose-400">{error}</p>}
 
                   <button
                     type="submit"
                     disabled={status === 'submitting'}
-                    className={`${GRADIENT_BTN} mt-5 w-full`}
+                    className={`${PRIMARY_BTN} mt-5 w-full`}
                   >
-                    {status === 'submitting' ? 'Sending…' : booking.submitLabel}
+                    {status === 'submitting' ? copy.sending : copy.submit}
                   </button>
 
                   <p className="mt-3 text-center text-xs text-subtle">
-                    Prefer Upwork?{' '}
+                    {copy.preferUpwork}{' '}
                     <a
                       href={siteConfig.social.upwork}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1 font-medium text-accent hover:underline"
                     >
-                      Hire me on Upwork
+                      {copy.hireUpwork}
                       <ExternalIcon />
                     </a>
                   </p>
 
                   {!hasWeb3FormsKey() && (
-                    <p className="mt-2 text-center text-xs text-subtle">
-                      Submitting opens your email app with the details prefilled — just hit send.
-                    </p>
+                    <p className="mt-2 text-center text-xs text-subtle">{copy.mailtoHint}</p>
                   )}
                 </form>
               </>
@@ -308,7 +307,7 @@ function Row({ k, v }: { k: string; v: string }) {
   return (
     <div className="flex items-start justify-between gap-4">
       <dt className="text-subtle">{k}</dt>
-      <dd className="text-right font-medium text-ink">{v}</dd>
+      <dd className="text-end font-medium text-ink">{v}</dd>
     </div>
   )
 }

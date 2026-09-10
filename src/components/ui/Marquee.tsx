@@ -19,9 +19,15 @@ export function Marquee({
 }) {
   const reduce = useReducedMotion()
   return (
-    <div className={`overflow-hidden ${className}`}>
+    <div
+      className={`overflow-hidden ${className}`}
+      style={{
+        maskImage: 'linear-gradient(to right, transparent, #000 8%, #000 92%, transparent)',
+        WebkitMaskImage: 'linear-gradient(to right, transparent, #000 8%, #000 92%, transparent)',
+      }}
+    >
       <motion.div
-        className="flex w-max gap-4 pr-4"
+        className="flex w-max gap-4 pe-4"
         animate={reduce ? undefined : { x: reverse ? ['-50%', '0%'] : ['0%', '-50%'] }}
         transition={{ duration: speed, repeat: Infinity, ease: 'linear' }}
       >

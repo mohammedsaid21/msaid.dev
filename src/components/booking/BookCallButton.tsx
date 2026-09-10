@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { CTAButton } from '../ui/CTAButton'
 import { useBooking } from './useBooking'
+import { useLocale } from '../../i18n/LocaleProvider'
 
 interface BookCallButtonProps {
   children?: ReactNode
@@ -9,18 +10,14 @@ interface BookCallButtonProps {
   className?: string
 }
 
-/**
- * "Book a Call" trigger that opens the booking modal. Keeps the look of
- * CTAButton but routes the click to `useBooking().open()` instead of navigating.
- * `href="#contact"` remains as a no-JS fallback.
- */
 export function BookCallButton({
-  children = 'Book a Call',
+  children,
   variant = 'primary',
   size = 'md',
   className,
 }: BookCallButtonProps) {
   const { open } = useBooking()
+  const { t } = useLocale()
   return (
     <CTAButton
       href="#contact"
@@ -32,7 +29,7 @@ export function BookCallButton({
         open()
       }}
     >
-      {children}
+      {children ?? t.nav.book}
     </CTAButton>
   )
 }

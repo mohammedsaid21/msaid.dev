@@ -1,13 +1,7 @@
 import { siteConfig } from '../../config/site'
+import { useLocale } from '../../i18n/LocaleProvider'
 import { Section } from '../ui/Section'
 import { SectionHeading } from '../ui/SectionHeading'
-
-const CAPTIONS = [
-  'Every great product starts with a problem worth solving.',
-  'We design an experience users genuinely enjoy.',
-  'Built production-ready — fast, scalable, and maintainable.',
-  'Shipped, measured, and continuously improved.',
-]
 
 function IdeaBody() {
   return (
@@ -80,7 +74,7 @@ function ShippedBody({ accent }: { accent: string }) {
   ]
   return (
     <div className="flex h-full flex-col items-center justify-center gap-2 p-3">
-      <div className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-semibold text-emerald-600">
+      <div className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-semibold text-emerald-400">
         <span className="h-1 w-1 rounded-full bg-emerald-500" />
         Live
       </div>
@@ -99,8 +93,11 @@ function ShippedBody({ accent }: { accent: string }) {
 }
 
 function StageWindow({ index }: { index: number }) {
+  const { t } = useLocale()
   const cols = siteConfig.pipeline.columns
   const accent = cols[index].accent
+  const titles = t.pipeline.columns
+  const title = titles[cols[index].id]
   const bodies = [
     <IdeaBody key="idea" />,
     <DesignBody key="design" accent={accent} />,
@@ -108,14 +105,14 @@ function StageWindow({ index }: { index: number }) {
     <ShippedBody key="shipped" accent={accent} />,
   ]
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-canvas shadow-[0_14px_44px_-20px_rgba(17,17,22,0.16)]">
+    <div className="overflow-hidden rounded-2xl border border-line bg-canvas shadow-[0_14px_44px_-20px_rgba(0,0,0,0.45)]">
       <div className="flex items-center gap-1.5 border-b border-line bg-canvas-subtle px-3 py-2.5">
-        <span className="h-2 w-2 rounded-full bg-[#e2e2e6]" />
-        <span className="h-2 w-2 rounded-full bg-[#e2e2e6]" />
-        <span className="h-2 w-2 rounded-full bg-[#e2e2e6]" />
-        <span className="ml-auto inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ color: accent, background: `${accent}14` }}>
+        <span className="h-2 w-2 rounded-full bg-line" />
+        <span className="h-2 w-2 rounded-full bg-line" />
+        <span className="h-2 w-2 rounded-full bg-line" />
+        <span className="ms-auto inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ color: accent, background: `${accent}14` }}>
           <span className="h-1.5 w-1.5 rounded-full" style={{ background: accent }} />
-          {cols[index].title}
+          {title}
         </span>
       </div>
       <div className="h-44">{bodies[index]}</div>
@@ -123,23 +120,19 @@ function StageWindow({ index }: { index: number }) {
   )
 }
 
-/**
- * "From idea to shipped" — shown as a compact 4-stage row (Idea → Design →
- * Build → Shipped). Normal (non-pinned) layout; the pinned scroll effect lives
- * only on the Products section.
- */
 export function Pipeline() {
   const { pipeline } = siteConfig
+  const { t } = useLocale()
   const cols = pipeline.columns
   return (
     <Section id="pipeline">
-      <SectionHeading eyebrow="How it works" title={pipeline.title} />
+      <SectionHeading eyebrow={t.pipeline.eyebrow} title={t.pipeline.title} />
 
       <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cols.map((c, i) => (
           <div key={c.id} className="flex flex-col gap-3">
             <StageWindow index={i} />
-            <p className="text-center text-xs leading-relaxed text-muted">{CAPTIONS[i]}</p>
+            <p className="text-center text-xs leading-relaxed text-muted">{t.pipeline.captions[i]}</p>
           </div>
         ))}
       </div>

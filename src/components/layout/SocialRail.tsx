@@ -4,21 +4,25 @@ import { siteConfig } from '../../config/site'
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
 
+function pastHeroTrack(y: number) {
+  const track = document.getElementById('top')
+  const hold = track ? track.offsetHeight - window.innerHeight * 0.15 : window.innerHeight * 0.85
+  return y > hold
+}
+
 /**
- * Fixed left-edge social rail (desktop only). Stays pinned while reading,
- * hidden over the hero (where the WebGL shader hurts icon contrast and the
- * focus belongs to the headline + CTA), and fades in — opacity only, no slide —
- * once the visitor scrolls past the hero. Hidden entirely on mobile.
+ * Fixed start-edge social rail (desktop only). Hidden over the hero / numbers
+ * scene, then fades in once that track has scrolled away.
  */
 export function SocialRail() {
   const reduce = useReducedMotion()
   const { scrollY } = useScroll()
   const [past, setPast] = useState(
-    () => typeof window !== 'undefined' && window.scrollY > window.innerHeight * 0.85,
+    () => typeof window !== 'undefined' && pastHeroTrack(window.scrollY),
   )
 
   useMotionValueEvent(scrollY, 'change', (y) => {
-    const next = y > window.innerHeight * 0.85
+    const next = pastHeroTrack(y)
     if (next !== past) setPast(next)
   })
 
@@ -32,7 +36,8 @@ export function SocialRail() {
   return (
     <motion.div
       aria-label="Social links"
-      className="fixed bottom-6 left-6 z-40 hidden flex-col items-center gap-5 lg:left-8 lg:flex"
+      className="fixed bottom-6 start-6 z-40 hidden flex-col items-center gap-5 lg:start-8 lg:flex"
+      initial={{ opacity: 0 }}
       animate={{ opacity: past ? 1 : 0 }}
       transition={{ duration: reduce ? 0 : 0.3, ease: EASE }}
       style={{ pointerEvents: past ? 'auto' : 'none' }}

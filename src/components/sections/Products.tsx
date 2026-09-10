@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { siteConfig } from '../../config/site'
+import { useLocale } from '../../i18n/LocaleProvider'
 import { Section } from '../ui/Section'
 import { SectionHeading } from '../ui/SectionHeading'
 
@@ -26,7 +27,7 @@ function SaasMock({ accent }: { accent: string }) {
             <div
               key={i}
               className="flex-1 rounded-t"
-              style={{ height: `${h}%`, background: i === 3 ? accent : '#dcdce3' }}
+                style={{ height: `${h}%`, background: i === 3 ? accent : 'var(--color-line)' }}
             />
           ))}
         </div>
@@ -88,10 +89,10 @@ function PreviewBody({ variant, accent }: { variant: Variant; accent: string }) 
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 border-b border-line bg-canvas-subtle px-4 py-3">
-        <span className="h-2.5 w-2.5 rounded-full bg-[#e2e2e6]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#e2e2e6]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#e2e2e6]" />
-        <span className="ml-3 rounded-md border border-line bg-canvas px-3 py-1 text-[10px] text-subtle">
+        <span className="h-2.5 w-2.5 rounded-full bg-line" />
+        <span className="h-2.5 w-2.5 rounded-full bg-line" />
+        <span className="h-2.5 w-2.5 rounded-full bg-line" />
+        <span className="ms-3 rounded-md border border-line bg-canvas px-3 py-1 text-[10px] text-subtle">
           app.preview
         </span>
       </div>
@@ -132,10 +133,26 @@ function Detail({
   )
 }
 
-function ProjectCard({ p }: { p: { category: string; name: string; accent: string; variant: Variant; image?: string; problem: string; solution: string; impact: string; url?: string; tags?: readonly string[] } }) {
+function ProjectCard({
+  p,
+}: {
+  p: {
+    category: string
+    name: string
+    accent: string
+    variant: Variant
+    image?: string
+    problem: string
+    solution: string
+    impact: string
+    url?: string
+    tags?: readonly string[]
+  }
+}) {
+  const { t } = useLocale()
   return (
-    <div className="grid overflow-hidden rounded-3xl border border-line bg-canvas shadow-[0_24px_60px_-30px_rgba(17,17,22,0.22)] lg:grid-cols-[1fr_1fr]">
-      <div className="group relative min-h-[32rem] overflow-hidden border-b border-line bg-canvas-subtle lg:border-b-0 lg:border-r">
+    <div className="grid overflow-hidden rounded-3xl border border-line bg-canvas shadow-[0_24px_60px_-30px_rgba(0,0,0,0.55)] lg:grid-cols-[1fr_1fr]">
+      <div className="group relative min-h-[32rem] overflow-hidden border-b border-line bg-canvas-subtle lg:border-b-0 lg:border-e">
         {p.image ? (
           <img
             src={p.image}
@@ -156,24 +173,24 @@ function ProjectCard({ p }: { p: { category: string; name: string; accent: strin
         </span>
         <h3 className="mt-4 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{p.name}</h3>
         <div className="mt-6 flex flex-col gap-5">
-          <Detail label="Problem" accent={p.accent} icon={<WarnGlyph />}>
+          <Detail label={t.products.problem} accent={p.accent} icon={<WarnGlyph />}>
             {p.problem}
           </Detail>
-          <Detail label="Solution" accent={p.accent} icon={<CheckGlyph />}>
+          <Detail label={t.products.solution} accent={p.accent} icon={<CheckGlyph />}>
             {p.solution}
           </Detail>
-          <Detail label="Impact" accent={p.accent} icon={<TrendGlyph />}>
+          <Detail label={t.products.impact} accent={p.accent} icon={<TrendGlyph />}>
             {p.impact}
           </Detail>
         </div>
         {p.tags && p.tags.length > 0 && (
           <div className="mt-6 flex flex-wrap gap-2">
-            {p.tags.map((t) => (
+            {p.tags.map((tag) => (
               <span
-                key={t}
+                key={tag}
                 className="rounded-full border border-line bg-canvas px-2.5 py-1 text-[11px] font-medium text-muted"
               >
-                {t}
+                {tag}
               </span>
             ))}
           </div>
@@ -186,7 +203,7 @@ function ProjectCard({ p }: { p: { category: string; name: string; accent: strin
             className="mt-6 inline-flex items-center gap-2 rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all hover:scale-105"
             style={{ color: p.accent, borderColor: p.accent }}
           >
-            Visit live site
+            {t.products.visit}
             <ExternalGlyph />
           </a>
         )}
@@ -202,10 +219,14 @@ function ProjectCard({ p }: { p: { category: string; name: string; accent: strin
  */
 export function Products() {
   const { products } = siteConfig
-  const items = products.items
+  const { t } = useLocale()
+  const items = products.items.map((p) => ({
+    ...p,
+    ...t.products.items[p.id],
+  }))
   return (
     <Section id="work" subtle>
-      <SectionHeading eyebrow="Selected work" title={products.title} />
+      <SectionHeading eyebrow={t.products.eyebrow} title={t.products.title} />
 
       <div className="mx-auto mt-12">
         {items.map((p, i) => (

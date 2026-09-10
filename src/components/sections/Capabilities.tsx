@@ -9,11 +9,11 @@ import {
   useTransform,
   useVelocity,
 } from 'framer-motion'
-import { siteConfig } from '../../config/site'
+import { useLocale } from '../../i18n/LocaleProvider'
 import { Section } from '../ui/Section'
 import { SectionHeading } from '../ui/SectionHeading'
 
-const ACCENTS = ['#6366f1', '#8b5cf6', '#ec4899', '#10b981']
+const ACCENTS = ['#e85d3a', '#f0a202', '#4fd1c5', '#a78bfa']
 
 /** Wrap a value into [min, max). Matches @motionone/utils wrap. */
 function wrap(min: number, max: number, v: number) {
@@ -66,10 +66,10 @@ function FeatureVisual({ accent }: { accent: string }) {
   return (
     <div className="overflow-hidden rounded-xl border border-line bg-canvas">
       <div className="flex items-center gap-1.5 border-b border-line bg-canvas-subtle px-3 py-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-[#e2e2e6]" />
-        <span className="h-1.5 w-1.5 rounded-full bg-[#e2e2e6]" />
-        <span className="h-1.5 w-1.5 rounded-full bg-[#e2e2e6]" />
-        <span className="ml-2 h-1.5 w-16 rounded bg-canvas-subtle" />
+        <span className="h-1.5 w-1.5 rounded-full bg-line" />
+        <span className="h-1.5 w-1.5 rounded-full bg-line" />
+        <span className="h-1.5 w-1.5 rounded-full bg-line" />
+        <span className="ms-2 h-1.5 w-16 rounded bg-canvas-subtle" />
       </div>
       <div
         className="grid grid-cols-3 gap-2 p-3"
@@ -78,7 +78,7 @@ function FeatureVisual({ accent }: { accent: string }) {
         <div className="col-span-1 flex flex-col gap-1.5">
           <div className="h-2 w-2 rounded" style={{ background: accent }} />
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-1.5 rounded bg-canvas-subtle" style={{ width: `${70 - i * 12}%` }} />
+          <div key={i} className="h-1.5 rounded bg-canvas-subtle" style={{ width: `${70 - i * 12}%` }} />
           ))}
         </div>
         <div className="col-span-2 flex flex-col gap-2">
@@ -88,7 +88,7 @@ function FeatureVisual({ accent }: { accent: string }) {
               <div
                 key={i}
                 className="flex-1 rounded-t"
-                style={{ height: `${h}%`, background: i === 3 ? accent : '#dcdce3' }}
+                style={{ height: `${h}%`, background: i === 3 ? accent : 'var(--color-line)' }}
               />
             ))}
           </div>
@@ -102,13 +102,15 @@ function CapabilityCard({
   item,
   index,
   accent,
+  label,
 }: {
   item: { title: string; body: string }
   index: number
   accent: string
+  label: string
 }) {
   return (
-    <div className="w-[300px] shrink-0 overflow-hidden rounded-2xl border border-line bg-canvas shadow-[0_14px_44px_-20px_rgba(17,17,22,0.16)]">
+    <div className="w-[300px] shrink-0 overflow-hidden rounded-2xl border border-line bg-canvas shadow-[0_14px_44px_-20px_rgba(0,0,0,0.45)]">
       <div className="border-b border-line bg-canvas-subtle p-4">
         <FeatureVisual accent={accent} />
       </div>
@@ -120,7 +122,7 @@ function CapabilityCard({
             style={{ color: accent, background: `${accent}14` }}
           >
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: accent }} />
-            Capability
+            {label}
           </span>
         </div>
         <h3 className="mt-2 text-base font-semibold text-ink">{item.title}</h3>
@@ -131,20 +133,25 @@ function CapabilityCard({
 }
 
 export function Capabilities() {
-  const { capabilities } = siteConfig
-  const items = capabilities.items
+  const { t } = useLocale()
+  const items = t.capabilities.items
   const reduce = useReducedMotion()
 
   const cards = items.map((item, i) => (
-    <CapabilityCard key={item.title} item={item} index={i} accent={ACCENTS[i % ACCENTS.length]} />
+    <CapabilityCard
+      key={item.title}
+      item={item}
+      index={i}
+      accent={ACCENTS[i % ACCENTS.length]}
+      label={t.capabilities.label}
+    />
   ))
 
   return (
     <Section id="capabilities" subtle>
-      <SectionHeading eyebrow="Capabilities" title={capabilities.title} />
+      <SectionHeading eyebrow={t.capabilities.eyebrow} title={t.capabilities.title} />
 
       {reduce ? (
-        // Reduced-motion: static grid, no continuous animation.
         <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">{cards}</div>
       ) : (
         <div className="mt-12">
@@ -152,9 +159,7 @@ export function Capabilities() {
         </div>
       )}
 
-      <p className="mt-6 text-center text-xs text-subtle">
-        ↕ Scroll faster — the cards drift quicker and reverse direction.
-      </p>
+      <p className="mt-6 text-center text-xs text-subtle">{t.capabilities.hint}</p>
     </Section>
   )
 }

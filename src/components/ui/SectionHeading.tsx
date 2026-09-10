@@ -17,7 +17,7 @@ export function SectionHeading({
   align = 'center',
 }: SectionHeadingProps) {
   const alignment =
-    align === 'center' ? 'items-center text-center mx-auto' : 'items-start text-left'
+    align === 'center' ? 'items-center text-center mx-auto' : 'items-start text-start'
   return (
     <Reveal className={`flex max-w-2xl flex-col gap-4 ${alignment}`}>
       {eyebrow && (

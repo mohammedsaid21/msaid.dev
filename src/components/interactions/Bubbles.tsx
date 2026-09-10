@@ -19,10 +19,10 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
 type RGB = `${number}, ${number}, ${number}`
 const PALETTE: { rgb: RGB }[] = [
-  { rgb: '139, 92, 246' }, // violet
-  { rgb: '99, 102, 241' }, // indigo
-  { rgb: '236, 72, 153' }, // fuchsia
-  { rgb: '6, 182, 212' }, // cyan
+  { rgb: '232, 93, 58' },
+  { rgb: '240, 162, 2' },
+  { rgb: '124, 92, 191' },
+  { rgb: '79, 209, 197' },
 ]
 
 const PARTICLES = 10
@@ -54,7 +54,7 @@ const makeCfg = (): Cfg => ({
   x: edgeX(),
   // Bias ~30% of bubbles into the hero band (top of the page) so the hero has
   // visible life on first load; the rest spread over the whole document.
-  y: Math.random() < 0.3 ? rand(6, 16) : rand(8, 86),
+  y: rand(28, 92),
   size: rand(26, 60),
   rgb: pick(PALETTE).rgb,
   driftX: rand(-26, 26),

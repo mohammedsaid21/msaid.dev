@@ -1,22 +1,23 @@
 import { Helmet } from 'react-helmet-async'
 import { siteConfig } from '../../config/site'
+import { useLocale } from '../../i18n/LocaleProvider'
+import { useTheme } from '../../theme/ThemeProvider'
 
-/**
- * Centralized document metadata for SEO and social sharing.
- * Values are also mirrored statically in index.html for first-paint crawlers;
- * this component enriches/overrides them at runtime.
- */
 export function Seo() {
-  const title = `${siteConfig.name} — ${siteConfig.role}`
-  const description = siteConfig.description
+  const { t, locale, dir } = useLocale()
+  const { theme } = useTheme()
+  const title = t.seo.title
+  const description = t.seo.description
   const url = siteConfig.url
+  const themeColor = theme === 'dark' ? '#0e1014' : '#f6f5f2'
 
   const personJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: siteConfig.name,
-    jobTitle: siteConfig.role,
-    description: siteConfig.description,
+    alternateName: siteConfig.nameAr,
+    jobTitle: t.seo.jobTitle,
+    description,
     url,
     email: `mailto:${siteConfig.email}`,
     sameAs: Object.values(siteConfig.social),
@@ -35,28 +36,25 @@ export function Seo() {
 
   return (
     <Helmet>
-      <html lang={siteConfig.locale} />
+      <html lang={locale} dir={dir} data-theme={theme} />
       <title>{title}</title>
       <meta name="description" content={description} />
-      <meta name="theme-color" content="#ffffff" />
+      <meta name="theme-color" content={themeColor} />
       <meta name="robots" content="index, follow" />
       <link rel="canonical" href={url} />
 
-      {/* Open Graph */}
       <meta property="og:type" content="website" />
       <meta property="og:url" content={url} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:site_name" content={siteConfig.name} />
+      <meta property="og:locale" content={locale === 'ar' ? 'ar_AR' : 'en_US'} />
 
-      {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
 
-      <script type="application/ld+json">
-        {JSON.stringify(personJsonLd)}
-      </script>
+      <script type="application/ld+json">{JSON.stringify(personJsonLd)}</script>
     </Helmet>
   )
 }

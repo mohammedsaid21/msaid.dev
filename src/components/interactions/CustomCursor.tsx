@@ -45,7 +45,7 @@ export function CustomCursor() {
     <>
       <motion.div
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[9999] h-2 w-2 rounded-full bg-fuchsia"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] h-2 w-2 rounded-full bg-ink"
         style={{ x, y, marginLeft: -4, marginTop: -4, opacity: visible ? 1 : 0 }}
       />
       <motion.div
@@ -60,7 +60,9 @@ export function CustomCursor() {
         }}
         animate={{
           scale: hovering ? 1.7 : 1,
-          borderColor: hovering ? 'rgba(236,72,153,0.9)' : 'rgba(99,102,241,0.6)',
+          borderColor: hovering
+            ? 'var(--color-accent)'
+            : 'color-mix(in srgb, var(--color-ink) 35%, transparent)',
         }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       />

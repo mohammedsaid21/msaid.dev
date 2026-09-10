@@ -1,8 +1,11 @@
 import { siteConfig } from '../../config/site'
 import { Logo } from '../ui/Logo'
+import { useLocale } from '../../i18n/LocaleProvider'
 
 export function Footer() {
   const year = new Date().getFullYear()
+  const { t, locale } = useLocale()
+  const brand = locale === 'ar' ? siteConfig.nameAr : siteConfig.shortName
 
   return (
     <footer className="border-t border-line">
@@ -10,17 +13,23 @@ export function Footer() {
         <div className="flex flex-col items-center gap-2 lg:items-start">
           <div className="flex items-center gap-2.5">
             <Logo size={32} />
-            <span className="text-sm font-semibold text-ink">{siteConfig.shortName}</span>
+            <span className="text-sm font-semibold text-ink">{brand}</span>
           </div>
-          <p className="max-w-xs text-center text-xs text-subtle lg:text-left">
-            {siteConfig.description}
+          <p className="max-w-xs text-center text-xs text-subtle lg:text-start">
+            {t.seo.description}
           </p>
         </div>
 
         <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted">
-          <a href="#capabilities" className="transition-colors hover:text-ink">Capabilities</a>
-          <a href="#work" className="transition-colors hover:text-ink">Work</a>
-          <a href="#audit" className="transition-colors hover:text-ink">Health Check</a>
+          <a href="#capabilities" className="transition-colors hover:text-ink">
+            {t.footer.capabilities}
+          </a>
+          <a href="#work" className="transition-colors hover:text-ink">
+            {t.footer.work}
+          </a>
+          <a href="#contact" className="transition-colors hover:text-ink">
+            {t.footer.contact}
+          </a>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -45,8 +54,8 @@ export function Footer() {
       </div>
 
       <div className="border-t border-line px-6 py-5 lg:px-8">
-        <p className="mx-auto max-w-7xl text-center text-xs text-subtle lg:text-left">
-          © {year} {siteConfig.shortName}. Designed &amp; built with React &amp; Tailwind CSS.
+        <p className="mx-auto max-w-7xl text-center text-xs text-subtle lg:text-start">
+          © {year} {brand}. {t.footer.credit}
         </p>
       </div>
     </footer>
