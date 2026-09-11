@@ -30,6 +30,7 @@ export function SocialRail() {
     { label: 'LinkedIn', href: siteConfig.social.linkedin, Icon: LinkedInIcon },
     { label: 'GitHub', href: siteConfig.social.github, Icon: GitHubIcon },
     { label: 'Upwork', href: siteConfig.social.upwork, Icon: UpworkIcon },
+    { label: 'Telegram', href: siteConfig.social.telegram, Icon: TelegramIcon },
     { label: 'Email', href: `mailto:${siteConfig.email}`, Icon: MailIcon },
   ]
 
@@ -81,6 +82,14 @@ function UpworkIcon() {
   return (
     <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M9.5 4a2 2 0 0 0-2 2v1H4a2.5 2.5 0 0 0-2.5 2.5v9A2.5 2.5 0 0 0 4 21h16a2.5 2.5 0 0 0 2.5-2.5v-9A2.5 2.5 0 0 0 20 7h-3.5V6a2 2 0 0 0-2-2h-5zm0 2h5v1h-5V6z" />
+    </svg>
+  )
+}
+
+function TelegramIcon() {
+  return (
+    <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M21.5 3.4 2.7 10.6c-1.3.5-1.3 1.2-.2 1.5l4.8 1.5 1.9 6c.2.7.4 1 1.1.6l2.6-2.4 4.3 3.2c.8.4 1.4.2 1.6-.7L22.8 4.7c.3-1.2-.4-1.7-1.3-1.3zM8.3 13.7l10.2-6.3c.5-.3.9 0 .5.3l-8.3 7.3-.3 3.3-2.1-4.6z" />
     </svg>
   )
 }

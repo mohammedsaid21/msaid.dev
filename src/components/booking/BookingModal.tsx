@@ -3,9 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { siteConfig } from '../../config/site'
 import { useLocale } from '../../i18n/LocaleProvider'
 import {
-  buildMailto,
   formatDate,
-  hasWeb3FormsKey,
   nowHHMM,
   submitBooking,
   todayISO,
@@ -37,7 +35,6 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
   const panelRef = useRef<HTMLDivElement>(null)
 
   const [status, setStatus] = useState<Status>('idle')
-  const [deliveredVia, setDeliveredVia] = useState<'email' | 'mailto'>('email')
   const [error, setError] = useState('')
 
   const [date, setDate] = useState('')
@@ -50,7 +47,6 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
   useEffect(() => {
     if (!isOpen) return
     setStatus('idle')
-    setDeliveredVia('email')
     setError('')
     setDate('')
     setTime('')
@@ -102,24 +98,18 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
     }
 
     const payload = buildPayload()
-
-    if (hasWeb3FormsKey()) {
-      setStatus('submitting')
-      const res = await submitBooking(payload)
+    setStatus('submitting')
+    try {
+      const res = await submitBooking(payload, booking.mailtoRecipient)
       if (res.ok) {
-        setDeliveredVia('email')
         setStatus('success')
         return
       }
-      setStatus('idle')
-      setError(copy.errorBody)
-      return
+    } catch {
+      /* network / abort */
     }
-
-    // No access key configured → fall back to a pre-filled email.
-    window.location.href = buildMailto(payload, booking.mailtoRecipient)
-    setDeliveredVia('mailto')
-    setStatus('success')
+    setStatus('idle')
+    setError(copy.errorBody)
   }
 
   // Past times are only blocked when the date is today.
@@ -164,9 +154,7 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
                   <CheckIcon />
                 </div>
                 <h2 className="mt-5 text-2xl font-semibold text-ink">{copy.successTitle}</h2>
-                <p className="mx-auto mt-2 max-w-sm text-sm text-muted">
-                  {deliveredVia === 'mailto' ? copy.mailtoBody : copy.successBody}
-                </p>
+                <p className="mx-auto mt-2 max-w-sm text-sm text-muted">{copy.successBody}</p>
 
                 <dl className="mx-auto mt-6 max-w-sm space-y-2 rounded-2xl border border-line bg-canvas-subtle p-5 text-start text-sm">
                   <Row k={copy.date} v={formatDate(date)} />
@@ -175,14 +163,6 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 </dl>
 
                 <div className="mt-6 flex flex-col items-center gap-3">
-                  {deliveredVia === 'mailto' && (
-                    <a
-                      className={PRIMARY_BTN}
-                      href={buildMailto(buildPayload(), booking.mailtoRecipient)}
-                    >
-                      {copy.openEmail}
-                    </a>
-                  )}
                   <button type="button" className={QUIET_BTN} onClick={onClose}>
                     {copy.done}
                   </button>
@@ -289,10 +269,6 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
                       <ExternalIcon />
                     </a>
                   </p>
-
-                  {!hasWeb3FormsKey() && (
-                    <p className="mt-2 text-center text-xs text-subtle">{copy.mailtoHint}</p>
-                  )}
                 </form>
               </>
             )}

@@ -57,6 +57,7 @@ export interface Dictionary {
     solution: string
     impact: string
     visit: string
+    view: string
     items: Record<
       ProductId,
       { category: string; problem: string; solution: string; impact: string }
@@ -92,22 +93,17 @@ export interface Dictionary {
     name: string
     namePlaceholder: string
     email: string
-    whatsapp: string
     optional: string
-    details: string
-    detailsHint: string
-    detailsPlaceholder: string
-    budget: string
+    message: string
+    messagePlaceholder: string
     submit: string
     sending: string
     successTitle: string
     successBody: string
-    mailtoHint: string
-    openEmail: string
     another: string
     errName: string
     errEmail: string
-    errDetails: string
+    errMessage: string
     errorBody: string
   }
   booking: {

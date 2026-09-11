@@ -38,6 +38,7 @@ export function Footer() {
               ['LinkedIn', siteConfig.social.linkedin],
               ['GitHub', siteConfig.social.github],
               ['Upwork', siteConfig.social.upwork],
+              ['Telegram', siteConfig.social.telegram],
             ] as const
           ).map(([label, href]) => (
             <a

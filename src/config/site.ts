@@ -10,9 +10,10 @@ export const siteConfig = {
   url: 'https://msaid.app',
 
   social: {
-    linkedin: 'https://www.linkedin.com/in/mohammedsaid21',
+    linkedin: 'https://www.linkedin.com/in/engmohammedsaid',
     github: 'https://github.com/mohammedsaid21',
     upwork: 'https://www.upwork.com/freelancers/~01afd7175205b2dfdd',
+    telegram: 'https://t.me/ayla2035',
   },
 
   heroStats: [
@@ -120,10 +121,6 @@ export const siteConfig = {
       { id: 'build' as const, accent: '#f0a202' },
       { id: 'shipped' as const, accent: '#10b981' },
     ],
-  },
-
-  contact: {
-    budgets: ['< $5k', '$5–10k', '$10–20k', '$20–40k', '$40k+'],
   },
 
   booking: {

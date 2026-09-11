@@ -13,66 +13,108 @@ export function ProofBody({
 }) {
   const { t } = useLocale()
   const { proof } = siteConfig
+  const [featured, ...rest] = proof.metrics
 
   return (
-    <div className="flex h-full flex-col justify-center px-4 py-4 sm:px-8 sm:py-8">
-      {expanded ? (
-        <motion.div
+    <div
+      className={`flex h-full flex-col ${
+        expanded ? 'justify-center px-6 py-8 sm:px-12 sm:py-10' : 'justify-center px-4 py-3 sm:px-6'
+      }`}
+    >
+      {expanded && (
+        <motion.p
           style={headingOpacity ? { opacity: headingOpacity } : { opacity: 1 }}
-          className="text-start"
+          className="text-center text-[11px] font-medium uppercase tracking-[0.18em] text-accent"
         >
-          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-accent">
-            {t.proof.eyebrow}
-          </p>
-          <h2 className="mt-2 text-balance text-2xl font-semibold tracking-tight text-ink sm:text-3xl lg:text-4xl">
-            {t.proof.title}
-          </h2>
-          <p className="mt-2 max-w-xl me-auto text-sm leading-relaxed text-muted sm:text-base">
-            {t.proof.subtitle}
-          </p>
-        </motion.div>
-      ) : (
-        <p className="text-start text-[11px] font-medium uppercase tracking-[0.16em] text-accent">
           {t.proof.eyebrow}
-        </p>
+        </motion.p>
       )}
 
       <div
-        className={`grid gap-px overflow-hidden rounded-2xl border border-line bg-line ${
-          expanded ? 'mt-8 grid-cols-2 sm:grid-cols-4' : 'mt-3 grid-cols-4 lg:grid-cols-2'
-        }`}
+        className={
+          expanded
+            ? 'mt-5 flex flex-col items-center'
+            : 'flex items-center gap-4 sm:gap-6'
+        }
       >
-        {proof.metrics.map((m) => (
-          <div
-            key={m.id}
-            className={`flex flex-col items-center bg-canvas text-center ${
-              expanded ? 'px-3 py-7 sm:py-9' : 'px-1 py-3 sm:px-2 sm:py-5'
+        {!expanded && (
+          <p className="shrink-0 text-[11px] font-medium uppercase tracking-[0.16em] text-accent">
+            {t.proof.eyebrow}
+          </p>
+        )}
+
+        <div className={`relative ${expanded ? 'text-center' : 'shrink-0'}`}>
+          {expanded && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[min(42vw,18rem)] w-[min(70vw,28rem)] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--color-accent)_22%,transparent),transparent)]"
+            />
+          )}
+          <p
+            className={`font-semibold tabular-nums tracking-tight text-ink ${
+              expanded
+                ? 'text-[clamp(4.5rem,14vw,8.5rem)] leading-[0.88]'
+                : 'text-2xl sm:text-3xl'
             }`}
           >
+            <Counter value={featured.value} />
+          </p>
+          {expanded && (
+            <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
+              {t.proof.metrics[featured.id]}
+            </p>
+          )}
+        </div>
+
+        {!expanded && <span aria-hidden className="hidden h-8 w-px shrink-0 bg-line sm:block" />}
+
+        <div
+          className={
+            expanded
+              ? 'mt-10 grid w-full max-w-3xl grid-cols-3 border-y border-line'
+              : 'flex min-w-0 flex-1 items-center justify-around'
+          }
+        >
+          {rest.map((m, i) => (
             <div
-              className={`font-semibold tabular-nums tracking-tight text-ink ${
-                expanded ? 'text-3xl sm:text-5xl' : 'text-xl sm:text-3xl'
-              }`}
+              key={m.id}
+              className={
+                expanded
+                  ? `flex flex-col items-center px-2 py-6 text-center sm:py-7 ${
+                      i < rest.length - 1 ? 'border-e border-line' : ''
+                    }`
+                  : 'flex flex-col items-center px-1 text-center'
+              }
             >
-              <Counter value={m.value} />
+              <p
+                className={`font-semibold tabular-nums tracking-tight text-ink ${
+                  expanded ? 'text-3xl sm:text-5xl' : 'text-lg sm:text-2xl'
+                }`}
+              >
+                <Counter value={m.value} />
+              </p>
+              {expanded && (
+                <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.14em] text-subtle sm:text-[11px]">
+                  {t.proof.metrics[m.id]}
+                </p>
+              )}
             </div>
-            <div
-              className={`mt-1.5 text-[10px] font-medium uppercase tracking-[0.14em] text-subtle sm:text-[11px] ${
-                expanded ? '' : 'max-lg:hidden'
-              }`}
-            >
-              {t.proof.metrics[m.id]}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {expanded && (
         <motion.div
           style={headingOpacity ? { opacity: headingOpacity } : { opacity: 1 }}
-          className="mt-10"
+          className="mt-10 text-center"
         >
-          <p className="text-center text-[11px] font-medium uppercase tracking-[0.16em] text-subtle">
+          <h2 className="mx-auto max-w-3xl text-pretty text-xl font-semibold tracking-tight text-ink sm:text-2xl lg:text-[1.85rem] lg:whitespace-nowrap">
+            {t.proof.title}
+          </h2>
+          <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-muted sm:text-base">
+            {t.proof.subtitle}
+          </p>
+          <p className="mt-10 text-[11px] font-medium uppercase tracking-[0.16em] text-subtle">
             {t.proof.tools}
           </p>
           <div className="mt-4" dir="ltr">

@@ -23,7 +23,107 @@ export type BookingPayload = {
 
 export type SubmitResult = { ok: true } | { ok: false; reason: 'no-key' | 'error' }
 
-const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/v1/submit'
+function isSuccess(data: unknown): boolean {
+  if (typeof data !== 'object' || data === null) return false
+  const success = (data as { success?: boolean | string }).success
+  return success === true || success === 'true'
+}
+
+function responseMessage(data: unknown): string {
+  if (typeof data !== 'object' || data === null) return ''
+  return String((data as { message?: string }).message ?? '')
+}
+
+function isFormSubmitAccepted(data: unknown): boolean {
+  if (isSuccess(data)) return true
+  return /activat|confirm|submitted successfully/i.test(responseMessage(data))
+}
+
+function needsPageReferrer(data: unknown): boolean {
+  return /html files|web server/i.test(responseMessage(data))
+}
+
+async function readJson(res: Response): Promise<unknown> {
+  const text = await res.text()
+  try {
+    return JSON.parse(text) as unknown
+  } catch {
+    return { message: text }
+  }
+}
+
+function abortIn(ms: number): AbortSignal {
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+    return AbortSignal.timeout(ms)
+  }
+  const ctrl = new AbortController()
+  setTimeout(() => ctrl.abort(), ms)
+  return ctrl.signal
+}
+
+/** Native form POST — sends a document Referer, which FormSubmit requires. */
+function postFormSubmitFrame(recipient: string, body: Record<string, string>): Promise<SubmitResult> {
+  if (typeof document === 'undefined') return Promise.resolve({ ok: false, reason: 'error' })
+  return new Promise((resolve) => {
+    const iframe = document.createElement('iframe')
+    const name = `fs_${Date.now()}`
+    iframe.name = name
+    iframe.setAttribute('aria-hidden', 'true')
+    iframe.style.cssText = 'position:absolute;width:0;height:0;border:0;overflow:hidden'
+    const form = document.createElement('form')
+    form.method = 'POST'
+    form.action = `https://formsubmit.co/${encodeURIComponent(recipient)}`
+    form.target = name
+    form.acceptCharset = 'UTF-8'
+    form.style.display = 'none'
+    for (const [key, value] of Object.entries(body)) {
+      const input = document.createElement('input')
+      input.type = 'hidden'
+      input.name = key
+      input.value = value
+      form.appendChild(input)
+    }
+    document.body.append(iframe, form)
+    let settled = false
+    const finish = () => {
+      if (settled) return
+      settled = true
+      iframe.remove()
+      form.remove()
+      resolve({ ok: true })
+    }
+    form.submit()
+    setTimeout(finish, 1800)
+  })
+}
+
+async function postFormSubmit(
+  recipient: string,
+  body: Record<string, string>,
+): Promise<SubmitResult> {
+  if (!recipient) return { ok: false, reason: 'no-key' }
+  const fields = { ...body, _template: 'table' }
+  try {
+    const fd = new FormData()
+    for (const [key, value] of Object.entries(fields)) fd.append(key, value)
+
+    const res = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(recipient)}`, {
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      referrerPolicy: 'origin',
+      body: fd,
+      signal: abortIn(15000),
+    })
+    const data = await readJson(res)
+    if (isFormSubmitAccepted(data)) return { ok: true }
+    if (needsPageReferrer(data)) return postFormSubmitFrame(recipient, fields)
+    return { ok: false, reason: 'error' }
+  } catch {
+    return postFormSubmitFrame(recipient, fields)
+  }
+}
+
+const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit'
 
 /** True when a Web3Forms access key is configured in the environment. */
 export function hasWeb3FormsKey(): boolean {
@@ -68,47 +168,108 @@ export function formatDate(iso: string): string {
 }
 
 /**
- * Send the booking via Web3Forms. Requires `hasWeb3FormsKey()` to be true.
- * - Honeypot filled → silently report success without sending (drops bots).
- * - Network/API failure → `{ ok: false, reason: 'error' }` so the caller can
- *   offer the mailto fallback.
+ * Send the booking via Web3Forms when a key is set, otherwise FormSubmit.
  */
-export async function submitBooking(payload: BookingPayload): Promise<SubmitResult> {
-  // Honeypot tripped — pretend it worked so bots don't know they were dropped.
+export async function submitBooking(
+  payload: BookingPayload,
+  recipient: string,
+): Promise<SubmitResult> {
   if (payload.botcheck && payload.botcheck.trim() !== '') {
     return { ok: true }
   }
 
   const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY
-  if (!accessKey) {
-    return { ok: false, reason: 'no-key' }
+  const fields = {
+    email: payload.email,
+    'Preferred date': formatDate(payload.date),
+    'Preferred time': payload.time,
+    'Timezone (auto)': detectTimezone(),
+    Message: payload.message || '—',
   }
 
-  try {
-    const res = await fetch(WEB3FORMS_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        access_key: accessKey,
-        subject: `New booking request — ${payload.email}`,
-        from_name: 'Website booking',
-        replyto: payload.email,
-        botcheck: payload.botcheck ?? '',
-        email: payload.email,
-        'Preferred date': formatDate(payload.date),
-        'Preferred time': payload.time,
-        'Timezone (auto)': detectTimezone(),
-        Message: payload.message || '—',
-      }),
-    })
-    const data: unknown = await res.json().catch(() => null)
-    if (typeof data === 'object' && data !== null && (data as { success?: boolean }).success) {
-      return { ok: true }
+  if (accessKey) {
+    try {
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        referrerPolicy: 'origin',
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: `New booking request — ${payload.email}`,
+          from_name: 'Website booking',
+          replyto: payload.email,
+          botcheck: payload.botcheck ?? '',
+          ...fields,
+        }),
+        signal: abortIn(15000),
+      })
+      const data: unknown = await res.json().catch(() => null)
+      if (isSuccess(data)) return { ok: true }
+      return { ok: false, reason: 'error' }
+    } catch {
+      return { ok: false, reason: 'error' }
     }
-    return { ok: false, reason: 'error' }
-  } catch {
-    return { ok: false, reason: 'error' }
   }
+
+  return postFormSubmit(recipient, {
+    ...fields,
+    _subject: `New booking request — ${payload.email}`,
+    _captcha: 'false',
+    _replyto: payload.email,
+  })
+}
+
+export type ContactPayload = {
+  name: string
+  email: string
+  message: string
+  botcheck?: string
+}
+
+/** Send a contact message. Web3Forms when a key is set; otherwise FormSubmit. */
+export async function submitContact(
+  payload: ContactPayload,
+  recipient: string,
+): Promise<SubmitResult> {
+  if (payload.botcheck && payload.botcheck.trim() !== '') {
+    return { ok: true }
+  }
+
+  const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY
+  if (accessKey) {
+    try {
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        referrerPolicy: 'origin',
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: `New message — ${payload.name}`,
+          from_name: 'Website contact',
+          replyto: payload.email,
+          botcheck: payload.botcheck ?? '',
+          email: payload.email,
+          Name: payload.name,
+          Message: payload.message,
+        }),
+        signal: abortIn(15000),
+      })
+      const data: unknown = await res.json().catch(() => null)
+      if (isSuccess(data)) return { ok: true }
+      return { ok: false, reason: 'error' }
+    } catch {
+      return { ok: false, reason: 'error' }
+    }
+  }
+
+  return postFormSubmit(recipient, {
+    name: payload.name,
+    email: payload.email,
+    message: payload.message,
+    _subject: `New message — ${payload.name}`,
+    _captcha: 'false',
+    _replyto: payload.email,
+  })
 }
 
 /** Compose a pre-filled mailto: link as a fallback / "prefer email" option. */

@@ -9,6 +9,7 @@ import { motion, useMotionValue, useSpring } from 'framer-motion'
 export function CustomCursor() {
   const [enabled, setEnabled] = useState(false)
   const [hovering, setHovering] = useState(false)
+  const [viewCursor, setViewCursor] = useState(false)
   const [visible, setVisible] = useState(false)
 
   const x = useMotionValue(-100)
@@ -28,6 +29,7 @@ export function CustomCursor() {
       setVisible(true)
       const target = e.target as HTMLElement | null
       setHovering(!!target?.closest('a, button, input, textarea, [data-cursor]'))
+      setViewCursor(!!target?.closest('[data-view-cursor]'))
     }
     const leave = () => setVisible(false)
 
@@ -46,7 +48,7 @@ export function CustomCursor() {
       <motion.div
         aria-hidden
         className="pointer-events-none fixed left-0 top-0 z-[9999] h-2 w-2 rounded-full bg-ink"
-        style={{ x, y, marginLeft: -4, marginTop: -4, opacity: visible ? 1 : 0 }}
+        style={{ x, y, marginLeft: -4, marginTop: -4, opacity: visible && !viewCursor ? 1 : 0 }}
       />
       <motion.div
         aria-hidden
@@ -56,7 +58,7 @@ export function CustomCursor() {
           y: ringY,
           marginLeft: -18,
           marginTop: -18,
-          opacity: visible ? 1 : 0,
+          opacity: visible && !viewCursor ? 1 : 0,
         }}
         animate={{
           scale: hovering ? 1.7 : 1,

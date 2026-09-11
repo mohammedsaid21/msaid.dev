@@ -4,17 +4,9 @@ import { useLocale } from '../../i18n/LocaleProvider'
 import { Section } from '../ui/Section'
 import { Reveal } from '../ui/Reveal'
 import { BookCallButton } from '../booking/BookCallButton'
-import { hasWeb3FormsKey } from '../../lib/booking'
-
-/**
- * Contact — a two-column project-inquiry form, the alternative path for visitors
- * who'd rather share details than book a call. Submission reuses the same
- * Web3Forms backend as the booking flow (env key + mailto fallback + honeypot),
- * so every inquiry lands in the owner's inbox the same way.
- */
+import { submitContact } from '../../lib/booking'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const ENDPOINT = 'https://api.web3forms.com/v1/submit'
 
 const FIELD =
   'mt-1.5 w-full rounded-xl border border-line bg-canvas-subtle px-3.5 py-3 text-sm text-ink placeholder:text-subtle focus:border-accent focus:bg-canvas focus:outline-none'
@@ -25,53 +17,31 @@ type Status = 'idle' | 'submitting' | 'success'
 
 export function Contact() {
   const { t, locale } = useLocale()
-  const { contact, social, email, name, nameAr } = siteConfig
+  const { social, email, name, nameAr } = siteConfig
   const copy = t.contact
   const displayName = locale === 'ar' ? nameAr : name
   const role = t.seo.jobTitle
   const [status, setStatus] = useState<Status>('idle')
-  const [deliveredVia, setDeliveredVia] = useState<'email' | 'mailto'>('email')
   const [error, setError] = useState('')
 
   const [contactName, setContactName] = useState('')
   const [emailVal, setEmailVal] = useState('')
-  const [whatsapp, setWhatsapp] = useState('')
-  const [details, setDetails] = useState('')
-  const [budget, setBudget] = useState('')
-  const [botcheck, setBotcheck] = useState('') // honeypot — must stay empty
+  const [message, setMessage] = useState('')
+  const [botcheck, setBotcheck] = useState('')
 
   function reset() {
     setContactName('')
     setEmailVal('')
-    setWhatsapp('')
-    setDetails('')
-    setBudget('')
+    setMessage('')
     setBotcheck('')
     setStatus('idle')
     setError('')
   }
 
-  function buildMailto() {
-    const subject = `Project inquiry — ${contactName || 'website'}`
-    const body = [
-      `Name: ${contactName}`,
-      `Email: ${emailVal}`,
-      whatsapp ? `WhatsApp: ${whatsapp}` : '',
-      budget ? `Budget: ${budget}` : '',
-      '',
-      details,
-    ]
-      .filter(Boolean)
-      .join('\n')
-    return `mailto:${email}?${new URLSearchParams({ subject, body }).toString()}`
-  }
-
   async function onSubmit(e: FormEvent) {
     e.preventDefault()
     setError('')
-    // Honeypot tripped → silently pretend success (drops bots).
     if (botcheck.trim()) {
-      setDeliveredVia('email')
       setStatus('success')
       return
     }
@@ -83,51 +53,26 @@ export function Contact() {
       setError(copy.errEmail)
       return
     }
-    if (details.trim().length < 10) {
-      setError(copy.errDetails)
-      return
-    }
-
-    const key = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY
-    if (!key) {
-      // No backend key → fall back to a pre-filled email.
-      window.location.href = buildMailto()
-      setDeliveredVia('mailto')
-      setStatus('success')
+    if (message.trim().length < 4) {
+      setError(copy.errMessage)
       return
     }
 
     setStatus('submitting')
     try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          access_key: key,
-          subject: `New project inquiry — ${contactName}`,
-          from_name: 'Website contact',
-          replyto: emailVal,
-          botcheck,
-          email: emailVal,
-          Name: contactName,
-          Email: emailVal,
-          WhatsApp: whatsapp || '—',
-          Budget: budget || 'Not specified',
-          'Project details': details,
-        }),
-      })
-      const data: unknown = await res.json().catch(() => null)
-      if (typeof data === 'object' && data !== null && (data as { success?: boolean }).success) {
-        setDeliveredVia('email')
+      const res = await submitContact(
+        { name: contactName.trim(), email: emailVal.trim(), message: message.trim(), botcheck },
+        email,
+      )
+      if (res.ok) {
         setStatus('success')
         return
       }
-      setStatus('idle')
-      setError(copy.errorBody)
     } catch {
-      setStatus('idle')
-      setError(copy.errorBody)
+      /* network / abort */
     }
+    setStatus('idle')
+    setError(copy.errorBody)
   }
 
   if (status === 'success') {
@@ -139,21 +84,17 @@ export function Contact() {
               <CheckIcon />
             </div>
             <h2 className="mt-5 text-2xl font-semibold text-ink">{copy.successTitle}</h2>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-muted">
-              {deliveredVia === 'mailto' ? copy.mailtoHint : copy.successBody}
-            </p>
-            {deliveredVia === 'mailto' && (
-              <a className={`${PRIMARY_BTN} mt-6`} href={buildMailto()}>
-                {copy.openEmail}
-              </a>
-            )}
-            <button
-              type="button"
-              onClick={reset}
-              className="mt-4 block w-full cursor-pointer text-sm font-medium text-accent hover:underline"
-            >
-              {copy.another}
-            </button>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-muted">{copy.successBody}</p>
+            <div className="mt-8 flex flex-col items-center gap-3">
+              <BookCallButton variant="primary">{copy.book}</BookCallButton>
+              <button
+                type="button"
+                onClick={reset}
+                className="cursor-pointer text-sm font-medium text-muted hover:text-ink"
+              >
+                {copy.another}
+              </button>
+            </div>
           </div>
         </Reveal>
       </Section>
@@ -164,7 +105,6 @@ export function Contact() {
     <Section id="contact" subtle>
       <Reveal>
         <div className="overflow-hidden rounded-3xl border border-line bg-canvas shadow-[0_30px_80px_-50px_rgba(17,17,22,0.3)] lg:grid lg:grid-cols-2">
-          {/* Left — info / reassurance */}
           <div className="relative flex flex-col justify-between gap-10 bg-canvas-subtle p-8 sm:p-10 lg:p-12">
             <div className="pointer-events-none absolute -start-10 top-10 h-44 w-44 rounded-full bg-accent/10 blur-3xl" />
             <div className="relative">
@@ -196,9 +136,9 @@ export function Contact() {
                 {copy.responseTime}
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
-                <span className="text-subtle">{copy.preferTalk}</span>
-                <BookCallButton variant="secondary" size="sm">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <span className="text-sm text-subtle">{copy.preferTalk}</span>
+                <BookCallButton variant="primary" size="sm">
                   {copy.book}
                 </BookCallButton>
               </div>
@@ -213,14 +153,15 @@ export function Contact() {
                 <a href={social.linkedin} target="_blank" rel="noreferrer" className="transition-colors hover:text-ink">
                   LinkedIn
                 </a>
+                <a href={social.telegram} target="_blank" rel="noreferrer" className="transition-colors hover:text-ink">
+                  Telegram
+                </a>
               </div>
             </div>
           </div>
 
-          {/* Right — the form */}
           <div className="p-8 sm:p-10 lg:p-12">
             <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
-              {/* Honeypot — visually hidden, real users never see it. */}
               <input
                 type="text"
                 tabIndex={-1}
@@ -231,82 +172,55 @@ export function Contact() {
                 className="absolute left-[-9999px] h-0 w-0 opacity-0"
               />
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Field id="ct-name" label={copy.name} required>
-                  <input
-                    id="ct-name"
-                    className={FIELD}
-                    value={contactName}
-                    onChange={(e) => setContactName(e.target.value)}
-                    placeholder={copy.namePlaceholder}
-                    autoComplete="name"
-                  />
-                </Field>
-                <Field id="ct-email" label={copy.email} required>
-                  <input
-                    id="ct-email"
-                    className={FIELD}
-                    type="email"
-                    value={emailVal}
-                    onChange={(e) => setEmailVal(e.target.value)}
-                    placeholder="you@company.com"
-                    autoComplete="email"
-                  />
-                </Field>
-              </div>
-
-              <Field id="ct-whatsapp" label={copy.whatsapp} optional optionalLabel={copy.optional}>
+              <Field id="ct-name" label={copy.name} required>
                 <input
-                  id="ct-whatsapp"
+                  id="ct-name"
                   className={FIELD}
-                  value={whatsapp}
-                  onChange={(e) => setWhatsapp(e.target.value)}
-                  placeholder="+1 234 567 890"
-                  inputMode="tel"
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
+                  placeholder={copy.namePlaceholder}
+                  autoComplete="name"
                 />
               </Field>
-
-              <Field id="ct-details" label={copy.details} required hint={copy.detailsHint}>
+              <Field id="ct-email" label={copy.email} required>
+                <input
+                  id="ct-email"
+                  className={FIELD}
+                  type="email"
+                  value={emailVal}
+                  onChange={(e) => setEmailVal(e.target.value)}
+                  placeholder="you@company.com"
+                  autoComplete="email"
+                />
+              </Field>
+              <Field id="ct-message" label={copy.message} required>
                 <textarea
-                  id="ct-details"
+                  id="ct-message"
                   className={`${FIELD} resize-none`}
-                  rows={4}
-                  value={details}
-                  onChange={(e) => setDetails(e.target.value)}
-                  placeholder={copy.detailsPlaceholder}
+                  rows={5}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder={copy.messagePlaceholder}
                 />
               </Field>
 
-              <div>
-                <p className="text-sm font-medium text-ink">{copy.budget}</p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {contact.budgets.map((b) => (
-                    <button
-                      type="button"
-                      key={b}
-                      onClick={() => setBudget((prev) => (prev === b ? '' : b))}
-                      aria-pressed={budget === b}
-                      className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
-                        budget === b
-                          ? 'border-transparent bg-accent text-white'
-                          : 'border-line bg-canvas text-muted hover:text-ink'
-                      }`}
-                    >
-                      {b}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {error && <p className="text-sm text-rose-400">{error}</p>}
+              {error && (
+                <p className="text-sm text-rose-400">
+                  {error}
+                  {error === copy.errorBody && (
+                    <>
+                      {' '}
+                      <a href={`mailto:${email}`} className="font-medium underline hover:text-ink">
+                        {email}
+                      </a>
+                    </>
+                  )}
+                </p>
+              )}
 
               <button type="submit" disabled={status === 'submitting'} className={`${PRIMARY_BTN} w-full`}>
                 {status === 'submitting' ? copy.sending : copy.submit}
               </button>
-
-              {!hasWeb3FormsKey() && (
-                <p className="text-center text-xs text-subtle">{copy.mailtoHint}</p>
-              )}
             </form>
           </div>
         </div>
@@ -319,17 +233,11 @@ function Field({
   id,
   label,
   required,
-  optional,
-  hint,
-  optionalLabel,
   children,
 }: {
   id: string
   label: string
   required?: boolean
-  optional?: boolean
-  hint?: string
-  optionalLabel?: string
   children: ReactNode
 }) {
   return (
@@ -337,10 +245,8 @@ function Field({
       <label htmlFor={id} className="text-sm font-medium text-ink">
         {label}
         {required && <span className="text-accent"> *</span>}
-        {optional && <span className="text-subtle"> ({optionalLabel})</span>}
       </label>
       {children}
-      {hint && <p className="mt-1.5 text-xs text-subtle">{hint}</p>}
     </div>
   )
 }
