@@ -156,6 +156,13 @@ export function Contact() {
                 <a href={social.telegram} target="_blank" rel="noreferrer" className="transition-colors hover:text-ink">
                   Telegram
                 </a>
+                <a
+                  href={siteConfig.cv}
+                  download="Mohammed_Said_FullStack_Developer.pdf"
+                  className="transition-colors hover:text-ink"
+                >
+                  {copy.cv}
+                </a>
               </div>
             </div>
           </div>

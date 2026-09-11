@@ -26,6 +26,7 @@ export interface Dictionary {
     body: string
     book: string
     work: string
+    cv: string
     github: string
     note: string
     modes: {
@@ -105,6 +106,7 @@ export interface Dictionary {
     errEmail: string
     errMessage: string
     errorBody: string
+    cv: string
   }
   booking: {
     heading: string
@@ -135,6 +137,7 @@ export interface Dictionary {
     work: string
     capabilities: string
     contact: string
+    cv: string
     credit: string
   }
 }

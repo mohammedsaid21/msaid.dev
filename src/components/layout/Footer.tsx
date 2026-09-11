@@ -32,7 +32,7 @@ export function Footer() {
           </a>
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-4">
           {(
             [
               ['LinkedIn', siteConfig.social.linkedin],
@@ -51,6 +51,13 @@ export function Footer() {
               {label}
             </a>
           ))}
+          <a
+            href={siteConfig.cv}
+            download="Mohammed_Said_FullStack_Developer.pdf"
+            className="text-sm text-muted transition-colors hover:text-ink"
+          >
+            {t.footer.cv}
+          </a>
         </div>
       </div>
 

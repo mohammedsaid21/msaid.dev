@@ -7,6 +7,7 @@ interface CTAButtonProps {
   variant?: 'primary' | 'secondary' | 'ghost'
   size?: 'md' | 'sm'
   className?: string
+  download?: string
   onClick?: (event: MouseEvent<HTMLAnchorElement>) => void
 }
 
@@ -16,6 +17,7 @@ export function CTAButton({
   variant = 'primary',
   size = 'md',
   className = '',
+  download,
   onClick,
 }: CTAButtonProps) {
   const reduce = useReducedMotion()
@@ -36,8 +38,9 @@ export function CTAButton({
     <motion.a
       href={href}
       onClick={onClick}
-      target={external ? '_blank' : undefined}
-      rel={external ? 'noreferrer' : undefined}
+      download={download}
+      target={external && !download ? '_blank' : undefined}
+      rel={external && !download ? 'noreferrer' : undefined}
       whileHover={!reduce ? { y: -1 } : undefined}
       whileTap={!reduce ? { scale: 0.98 } : undefined}
       transition={{ type: 'spring', stiffness: 400, damping: 26 }}

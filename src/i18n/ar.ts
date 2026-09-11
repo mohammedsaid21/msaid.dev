@@ -24,6 +24,7 @@ export const ar: Dictionary = {
     body: 'أبني المنتج كامل: الفكرة، القرار، والكود الذي يصل للناس. جاهز لشراكة تقنية، أو لمشروع بنطاق وسعر ثابت.',
     book: 'احجز اجتماعاً',
     work: 'شاهد أعمالي',
+    cv: 'حمّل السيرة',
     github: 'GitHub',
     note: 'مكالمة 30 دقيقة · بلا التزام',
     modes: {
@@ -180,6 +181,7 @@ export const ar: Dictionary = {
     errEmail: 'أدخل بريداً صالحاً.',
     errMessage: 'اكتب رسالة قصيرة.',
     errorBody: 'ما قدرت أرسل. حاول مرة أخرى، أو راسلني مباشرة.',
+    cv: 'حمّل السيرة',
   },
   booking: {
     heading: 'احجز مكالمة',
@@ -210,6 +212,7 @@ export const ar: Dictionary = {
     work: 'الأعمال',
     capabilities: 'القدرات',
     contact: 'تواصل',
+    cv: 'حمّل السيرة',
     credit: 'صُمم وبُني بـ React و Tailwind CSS.',
   },
 }

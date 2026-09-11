@@ -8,6 +8,7 @@ export const siteConfig = {
   shortName: 'Mohammed Said',
   email: 'mohmmedsaidaker@gmail.com',
   url: 'https://msaid.app',
+  cv: '/Mohammed_Said_FullStack_Developer.pdf',
 
   social: {
     linkedin: 'https://www.linkedin.com/in/engmohammedsaid',

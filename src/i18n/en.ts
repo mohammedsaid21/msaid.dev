@@ -24,6 +24,7 @@ export const en: Dictionary = {
     body: "I build complete products — the idea, the decisions, and the code that ships. Open for a technical partnership or a fixed-scope build.",
     book: 'Book a meeting',
     work: 'See my work',
+    cv: 'Download CV',
     github: 'GitHub',
     note: '30-minute call · no obligation',
     modes: {
@@ -180,6 +181,7 @@ export const en: Dictionary = {
     errEmail: 'Please enter a valid email address.',
     errMessage: 'Please write a short message.',
     errorBody: 'Could not send. Try again, or email me directly.',
+    cv: 'Download CV',
   },
   booking: {
     heading: 'Book a call',
@@ -210,6 +212,7 @@ export const en: Dictionary = {
     work: 'Work',
     capabilities: 'Capabilities',
     contact: 'Contact',
+    cv: 'Download CV',
     credit: 'Designed & built with React & Tailwind CSS.',
   },
 }

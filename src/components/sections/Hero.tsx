@@ -161,6 +161,13 @@ export function Hero() {
             <CTAButton href="#work" variant="secondary">
               {t.hero.work}
             </CTAButton>
+            <CTAButton
+              href={siteConfig.cv}
+              download="Mohammed_Said_FullStack_Developer.pdf"
+              variant="ghost"
+            >
+              {t.hero.cv}
+            </CTAButton>
             <CTAButton href={siteConfig.social.github} variant="ghost">
               {t.hero.github}
             </CTAButton>
@@ -231,6 +238,13 @@ function StaticHero({
           </BookCallButton>
           <CTAButton href="#work" variant="secondary">
             {t.hero.work}
+          </CTAButton>
+          <CTAButton
+            href={siteConfig.cv}
+            download="Mohammed_Said_FullStack_Developer.pdf"
+            variant="ghost"
+          >
+            {t.hero.cv}
           </CTAButton>
           <CTAButton href={siteConfig.social.github} variant="ghost">
             {t.hero.github}

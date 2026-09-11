@@ -40,6 +40,13 @@ export function NavBar() {
           >
             {t.nav.contact}
           </a>
+          <a
+            href={siteConfig.cv}
+            download="Mohammed_Said_FullStack_Developer.pdf"
+            className="hidden text-sm text-muted transition-colors hover:text-ink md:block"
+          >
+            {t.hero.cv}
+          </a>
           <button
             type="button"
             onClick={toggleTheme}
