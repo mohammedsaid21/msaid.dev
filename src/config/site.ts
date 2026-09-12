@@ -26,9 +26,9 @@ export const siteConfig = {
   proof: {
     metrics: [
       { id: 'users' as const, value: '15K+' },
-      { id: 'products' as const, value: '10+' },
+      { id: 'years' as const, value: '5+' },
       { id: 'founders' as const, value: '40+' },
-      { id: 'years' as const, value: '4+' },
+      { id: 'products' as const, value: '10+' },
     ],
     techStack: [
       'React',
@@ -46,6 +46,15 @@ export const siteConfig = {
 
   products: {
     items: [
+      {
+        id: 'ghaymah' as const,
+        name: 'Ghaymah',
+        accent: '#16a34a',
+        image: '/projects/ghaymah.webp',
+        variant: 'saas' as const,
+        tags: ['Next.js', 'TypeScript', 'Full-Stack'],
+        url: 'https://ghaymah.systems/',
+      },
       {
         id: 'forsati' as const,
         name: 'Forsati',

@@ -44,37 +44,37 @@ export function ProjectScene({
 
   const { scrollYProgress } = useScroll({
     target: trackRef,
-    offset: isLg ? ['start start', 'end end'] : ['start 0.88', 'end 0.45'],
+    offset: isLg ? ['start start', 'end end'] : ['start 0.88', 'end 0.5'],
   })
-  const p = useSpring(scrollYProgress, { stiffness: 78, damping: 28, mass: 0.32 })
+  const p = useSpring(scrollYProgress, { stiffness: 140, damping: 28, mass: 0.28 })
 
   useMotionValueEvent(p, 'change', (v) => {
-    if (v > 0.1 && v < 0.9) onActive(index)
+    if (v > 0.08 && v < 0.92) onActive(index)
   })
 
-  const enterX = isLg ? 92 : 36
-  const enterY = isLg ? 110 : 72
+  const enterX = isLg ? 80 : 28
+  const enterY = isLg ? 88 : 56
   const imageFromX = fromLeft ? -enterX : enterX
   const textFromX = -imageFromX
 
-  const visualX = useTransform(p, [0, 0.2, 0.78, 1], [imageFromX, 0, 0, imageFromX * 0.35])
-  const visualY = useTransform(p, [0, 0.22, 0.8, 1], [enterY, 0, 0, -28])
-  const visualScale = useTransform(p, [0.08, 0.82], [1.08, 1])
-  const visualOpacity = useTransform(p, [0, 0.12, 0.88, 1], [0.55, 1, 1, 0.75])
-  const parallaxY = useTransform(p, [0, 1], [18, -22])
-  const textX = useTransform(p, [0.05, 0.26, 0.8, 1], [textFromX, 0, 0, textFromX * 0.2])
-  const textY = useTransform(p, [0.05, 0.26, 0.82, 1], [enterY * 0.7, 0, 0, -18])
-  const titleClip = useTransform(p, [0.14, 0.28], ['inset(110% 0% 0% 0%)', 'inset(0% 0% 0% 0%)'])
-  const titleOpacity = useTransform(p, [0.12, 0.26], [0, 1])
-  const problemClip = useTransform(p, [0.24, 0.38], ['inset(0% 0% 110% 0%)', 'inset(0% 0% 0% 0%)'])
-  const problemOpacity = useTransform(p, [0.22, 0.38], [0, 1])
-  const solutionClip = useTransform(p, [0.38, 0.5], ['inset(0% 0% 110% 0%)', 'inset(0% 0% 0% 0%)'])
-  const solutionOpacity = useTransform(p, [0.36, 0.5], [0, 1])
-  const impactClip = useTransform(p, [0.5, 0.62], ['inset(0% 0% 110% 0%)', 'inset(0% 0% 0% 0%)'])
-  const impactOpacity = useTransform(p, [0.48, 0.62], [0, 1])
-  const metaOpacity = useTransform(p, [0.56, 0.7], [0, 1])
-  const numberY = useTransform(p, [0, 1], [48, -56])
-  const numberOpacity = useTransform(p, [0.06, 0.22, 0.78, 1], [0, 0.14, 0.14, 0])
+  const visualX = useTransform(p, [0, 0.14, 0.72, 1], [imageFromX, 0, 0, imageFromX * 0.3])
+  const visualY = useTransform(p, [0, 0.16, 0.74, 1], [enterY, 0, 0, -22])
+  const visualScale = useTransform(p, [0.06, 0.7], [1.08, 1])
+  const visualOpacity = useTransform(p, [0, 0.1, 0.82, 1], [0.55, 1, 1, 0.8])
+  const parallaxY = useTransform(p, [0, 1], [12, -16])
+  const textX = useTransform(p, [0.04, 0.18, 0.74, 1], [textFromX, 0, 0, textFromX * 0.18])
+  const textY = useTransform(p, [0.04, 0.18, 0.76, 1], [enterY * 0.65, 0, 0, -14])
+  const titleClip = useTransform(p, [0.1, 0.22], ['inset(110% 0% 0% 0%)', 'inset(0% 0% 0% 0%)'])
+  const titleOpacity = useTransform(p, [0.08, 0.2], [0, 1])
+  const problemClip = useTransform(p, [0.18, 0.3], ['inset(0% 0% 110% 0%)', 'inset(0% 0% 0% 0%)'])
+  const problemOpacity = useTransform(p, [0.16, 0.3], [0, 1])
+  const solutionClip = useTransform(p, [0.28, 0.4], ['inset(0% 0% 110% 0%)', 'inset(0% 0% 0% 0%)'])
+  const solutionOpacity = useTransform(p, [0.26, 0.4], [0, 1])
+  const impactClip = useTransform(p, [0.38, 0.5], ['inset(0% 0% 110% 0%)', 'inset(0% 0% 0% 0%)'])
+  const impactOpacity = useTransform(p, [0.36, 0.5], [0, 1])
+  const metaOpacity = useTransform(p, [0.44, 0.56], [0, 1])
+  const numberY = useTransform(p, [0, 1], [32, -36])
+  const numberOpacity = useTransform(p, [0.04, 0.16, 0.76, 1], [0, 0.14, 0.14, 0])
 
   if (reduce) {
     return (
@@ -89,7 +89,7 @@ export function ProjectScene({
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-full rounded-[1.6rem] border border-line object-cover object-top"
+                className="w-full rounded-[1.6rem] border border-line object-cover object-top aspect-[16/10]"
               />
             )}
           </div>
@@ -111,7 +111,7 @@ export function ProjectScene({
     <article
       id={`work-${item.id}`}
       ref={trackRef}
-      className="relative py-16 pb-28 lg:h-[215vh] lg:py-0"
+      className="relative py-16 pb-28 lg:h-[128vh] lg:py-0"
     >
       <div className="flex items-center overflow-visible lg:sticky lg:top-0 lg:h-svh lg:overflow-hidden">
         <motion.span

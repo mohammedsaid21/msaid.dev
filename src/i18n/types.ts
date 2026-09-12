@@ -1,6 +1,6 @@
 export type Locale = 'en' | 'ar'
 
-export type ProductId = 'forsati' | 'austath' | 'sticky' | 'hisabity'
+export type ProductId = 'ghaymah' | 'forsati' | 'austath' | 'sticky' | 'hisabity'
 export type ExperimentId = 'lumen' | 'ayla' | 'padelbook'
 
 export interface Dictionary {

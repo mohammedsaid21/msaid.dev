@@ -18,13 +18,13 @@ export function ProofBody({
   return (
     <div
       className={`flex h-full flex-col ${
-        expanded ? 'justify-center px-6 py-8 sm:px-12 sm:py-10' : 'justify-center px-4 py-3 sm:px-6'
+        expanded ? 'justify-center px-6 py-9 sm:px-14 sm:py-12' : 'justify-center px-4 py-3 sm:px-6'
       }`}
     >
       {expanded && (
         <motion.p
           style={headingOpacity ? { opacity: headingOpacity } : { opacity: 1 }}
-          className="text-center text-[11px] font-medium uppercase tracking-[0.18em] text-accent"
+          className="text-center text-[11px] font-medium uppercase tracking-[0.22em] text-accent"
         >
           {t.proof.eyebrow}
         </motion.p>
@@ -33,7 +33,7 @@ export function ProofBody({
       <div
         className={
           expanded
-            ? 'mt-5 flex flex-col items-center'
+            ? 'mt-4 flex flex-col items-center'
             : 'flex items-center gap-4 sm:gap-6'
         }
       >
@@ -47,20 +47,20 @@ export function ProofBody({
           {expanded && (
             <div
               aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[min(42vw,18rem)] w-[min(70vw,28rem)] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--color-accent)_22%,transparent),transparent)]"
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[min(38vw,16rem)] w-[min(64vw,26rem)] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--color-accent)_18%,transparent),transparent)]"
             />
           )}
           <p
             className={`font-semibold tabular-nums tracking-tight text-ink ${
               expanded
-                ? 'text-[clamp(4.5rem,14vw,8.5rem)] leading-[0.88]'
+                ? 'text-[clamp(4.25rem,12vw,7.25rem)] leading-none'
                 : 'text-2xl sm:text-3xl'
             }`}
           >
             <Counter value={featured.value} />
           </p>
           {expanded && (
-            <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
+            <p className="mt-2.5 text-[11px] font-medium uppercase tracking-[0.2em] text-muted">
               {t.proof.metrics[featured.id]}
             </p>
           )}
@@ -69,9 +69,10 @@ export function ProofBody({
         {!expanded && <span aria-hidden className="hidden h-8 w-px shrink-0 bg-line sm:block" />}
 
         <div
+          dir="ltr"
           className={
             expanded
-              ? 'mt-10 grid w-full max-w-3xl grid-cols-3 border-y border-line'
+              ? 'mt-8 grid w-full max-w-2xl grid-cols-3 border-y border-line'
               : 'flex min-w-0 flex-1 items-center justify-around'
           }
         >
@@ -80,7 +81,7 @@ export function ProofBody({
               key={m.id}
               className={
                 expanded
-                  ? `flex flex-col items-center px-2 py-6 text-center sm:py-7 ${
+                  ? `flex flex-col items-center px-2 py-5 text-center sm:py-6 ${
                       i < rest.length - 1 ? 'border-e border-line' : ''
                     }`
                   : 'flex flex-col items-center px-1 text-center'
@@ -88,13 +89,13 @@ export function ProofBody({
             >
               <p
                 className={`font-semibold tabular-nums tracking-tight text-ink ${
-                  expanded ? 'text-3xl sm:text-5xl' : 'text-lg sm:text-2xl'
+                  expanded ? 'text-[1.65rem] leading-none sm:text-4xl' : 'text-lg sm:text-2xl'
                 }`}
               >
                 <Counter value={m.value} />
               </p>
               {expanded && (
-                <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.14em] text-subtle sm:text-[11px]">
+                <p className="mt-2 max-w-[9rem] text-[10px] font-medium uppercase tracking-[0.14em] text-subtle sm:text-[11px]">
                   {t.proof.metrics[m.id]}
                 </p>
               )}
@@ -106,23 +107,23 @@ export function ProofBody({
       {expanded && (
         <motion.div
           style={headingOpacity ? { opacity: headingOpacity } : { opacity: 1 }}
-          className="mt-10 text-center"
+          className="mt-8 text-center"
         >
-          <h2 className="mx-auto max-w-3xl text-pretty text-xl font-semibold tracking-tight text-ink sm:text-2xl lg:text-[1.85rem] lg:whitespace-nowrap">
+          <h2 className="mx-auto max-w-xl text-pretty text-[1.35rem] font-semibold leading-snug tracking-tight text-ink sm:text-2xl lg:text-[1.7rem] lg:leading-[1.35]">
             {t.proof.title}
           </h2>
-          <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-muted sm:text-base">
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-[0.95rem] sm:leading-relaxed">
             {t.proof.subtitle}
           </p>
-          <p className="mt-10 text-[11px] font-medium uppercase tracking-[0.16em] text-subtle">
+          <p className="mt-8 text-[11px] font-medium uppercase tracking-[0.18em] text-subtle">
             {t.proof.tools}
           </p>
-          <div className="mt-4" dir="ltr">
+          <div className="mt-3.5" dir="ltr">
             <Marquee speed={32}>
               {proof.techStack.map((tech) => (
                 <span
                   key={tech}
-                  className="flex items-center gap-2 rounded-full border border-line bg-canvas px-4 py-1.5 font-mono text-sm text-muted transition-colors hover:text-ink"
+                  className="inline-flex h-8 items-center gap-2 rounded-full border border-line bg-canvas-subtle px-4 font-mono text-[13px] tracking-wide text-muted transition-colors hover:text-ink"
                 >
                   <span className="h-1 w-1 rounded-full bg-accent" />
                   {tech}

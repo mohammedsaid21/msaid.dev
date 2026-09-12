@@ -1,65 +1,8 @@
-import { useRef, type ReactNode } from 'react'
-import {
-  motion,
-  useAnimationFrame,
-  useMotionValue,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  useVelocity,
-} from 'framer-motion'
 import { useLocale } from '../../i18n/LocaleProvider'
 import { Section } from '../ui/Section'
 import { SectionHeading } from '../ui/SectionHeading'
 
 const ACCENTS = ['#e85d3a', '#f0a202', '#4fd1c5', '#a78bfa']
-
-/** Wrap a value into [min, max). Matches @motionone/utils wrap. */
-function wrap(min: number, max: number, v: number) {
-  const range = max - min
-  return ((((v - min) % range) + range) % range) + min
-}
-
-/**
- * Scroll-velocity marquee: content drifts horizontally, and the drift
- * accelerates / reverses based on how fast (and which direction) you scroll.
- * Content is duplicated for a seamless loop.
- */
-function VelocityMarquee({
-  children,
-  baseVelocity = 2.5,
-}: {
-  children: ReactNode
-  baseVelocity?: number
-}) {
-  const baseX = useMotionValue(0)
-  const { scrollY } = useScroll()
-  const scrollVelocity = useVelocity(scrollY)
-  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 })
-  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], { clamp: false })
-  const x = useTransform(baseX, (v) => `${wrap(-50, 0, v)}%`)
-  const directionFactor = useRef(1)
-
-  useAnimationFrame((_, delta) => {
-    let moveBy = directionFactor.current * baseVelocity * (delta / 1000)
-    if (velocityFactor.get() < 0) directionFactor.current = -1
-    else if (velocityFactor.get() > 0) directionFactor.current = 1
-    moveBy += moveBy * velocityFactor.get()
-    baseX.set(baseX.get() + moveBy)
-  })
-
-  return (
-    <div className="overflow-hidden">
-      <motion.div className="flex w-max gap-5" style={{ x }}>
-        <div className="flex gap-5">{children}</div>
-        <div className="flex gap-5" aria-hidden>
-          {children}
-        </div>
-      </motion.div>
-    </div>
-  )
-}
 
 function FeatureVisual({ accent }: { accent: string }) {
   const bars = [45, 70, 55, 90, 60, 78]
@@ -78,7 +21,7 @@ function FeatureVisual({ accent }: { accent: string }) {
         <div className="col-span-1 flex flex-col gap-1.5">
           <div className="h-2 w-2 rounded" style={{ background: accent }} />
           {[0, 1, 2].map((i) => (
-          <div key={i} className="h-1.5 rounded bg-canvas-subtle" style={{ width: `${70 - i * 12}%` }} />
+            <div key={i} className="h-1.5 rounded bg-canvas-subtle" style={{ width: `${70 - i * 12}%` }} />
           ))}
         </div>
         <div className="col-span-2 flex flex-col gap-2">
@@ -110,13 +53,13 @@ function CapabilityCard({
   label: string
 }) {
   return (
-    <div className="w-[300px] shrink-0 overflow-hidden rounded-2xl border border-line bg-canvas shadow-[0_14px_44px_-20px_rgba(0,0,0,0.45)]">
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-canvas shadow-[0_14px_44px_-20px_rgba(0,0,0,0.45)]">
       <div className="border-b border-line bg-canvas-subtle p-4">
         <FeatureVisual accent={accent} />
       </div>
-      <div className="p-5">
+      <div className="flex flex-1 flex-col p-5">
         <div className="flex items-center gap-2">
-          <span className="text-xl font-semibold text-line">{`0${index + 1}`}</span>
+          <span className="font-mono text-xl font-semibold text-line">{String(index + 1).padStart(2, '0')}</span>
           <span
             className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold"
             style={{ color: accent, background: `${accent}14` }}
@@ -126,40 +69,30 @@ function CapabilityCard({
           </span>
         </div>
         <h3 className="mt-2 text-base font-semibold text-ink">{item.title}</h3>
-        <p className="mt-1.5 text-xs leading-relaxed text-muted">{item.body}</p>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted">{item.body}</p>
       </div>
-    </div>
+    </article>
   )
 }
 
 export function Capabilities() {
   const { t } = useLocale()
   const items = t.capabilities.items
-  const reduce = useReducedMotion()
-
-  const cards = items.map((item, i) => (
-    <CapabilityCard
-      key={item.title}
-      item={item}
-      index={i}
-      accent={ACCENTS[i % ACCENTS.length]}
-      label={t.capabilities.label}
-    />
-  ))
 
   return (
     <Section id="capabilities" subtle>
       <SectionHeading eyebrow={t.capabilities.eyebrow} title={t.capabilities.title} />
-
-      {reduce ? (
-        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">{cards}</div>
-      ) : (
-        <div className="mt-12">
-          <VelocityMarquee baseVelocity={2.5}>{cards}</VelocityMarquee>
-        </div>
-      )}
-
-      <p className="mt-6 text-center text-xs text-subtle">{t.capabilities.hint}</p>
+      <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map((item, i) => (
+          <CapabilityCard
+            key={item.title}
+            item={item}
+            index={i}
+            accent={ACCENTS[i % ACCENTS.length]}
+            label={t.capabilities.label}
+          />
+        ))}
+      </div>
     </Section>
   )
 }

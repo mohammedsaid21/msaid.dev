@@ -58,6 +58,15 @@ export const en: Dictionary = {
     visit: 'Visit live site',
     view: 'View project',
     items: {
+      ghaymah: {
+        category: 'Arabic cloud platform',
+        problem:
+          'Shipping in the region meant depending on Vercel or DigitalOcean — with no Arabic-first cloud built for MENA developers.',
+        solution:
+          'Ghaymah — the first Arabic cloud infrastructure platform. A bilingual (AR/EN) dashboard covering compute, managed databases, container registry, CI/CD, AI services, and a one-click app marketplace.',
+        impact:
+          '500+ active developers across 18 Arab countries, 10,000+ apps deployed, and 99.97% uptime.',
+      },
       forsati: {
         category: 'Scholarships platform',
         problem:
@@ -123,7 +132,7 @@ export const en: Dictionary = {
     eyebrow: 'Capabilities',
     title: 'How I help you ship',
     label: 'Capability',
-    hint: 'Scroll — the cards drift with you.',
+    hint: 'Four ways we can work together.',
     items: [
       {
         title: 'Complete products',

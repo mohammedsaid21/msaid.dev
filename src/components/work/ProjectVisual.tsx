@@ -61,7 +61,7 @@ export function ProjectVisual({
       onPointerMove={onMove}
       onPointerLeave={onLeave}
       style={{ x, y, opacity }}
-      className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.6rem] border border-line bg-canvas-subtle shadow-[0_40px_90px_-48px_rgba(0,0,0,0.45)] lg:max-h-[62svh] lg:cursor-none"
+      className="relative aspect-[16/10] w-full overflow-hidden rounded-[1.6rem] border border-line bg-canvas-subtle shadow-[0_40px_90px_-48px_rgba(0,0,0,0.45)] lg:cursor-none"
     >
       <motion.div style={{ scale, x: shiftX, y: shiftY }} className="h-full w-full">
         <motion.div style={{ y: parallaxY }} className="h-[112%] w-full">

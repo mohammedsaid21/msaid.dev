@@ -184,7 +184,7 @@ export function Hero() {
             top: cardTop,
             left: cardLeft,
           }}
-          className="absolute z-20 overflow-hidden rounded-[1.75rem] border border-line bg-canvas shadow-[0_28px_80px_-36px_rgba(0,0,0,0.28)]"
+          className="absolute z-20 overflow-hidden rounded-[2rem] border border-line bg-canvas shadow-[0_24px_64px_-38px_rgba(26,25,22,0.32)]"
         >
           <ProofBody expanded={expanded} headingOpacity={headingOpacity} />
         </motion.aside>
